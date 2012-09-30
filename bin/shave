@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+var motor = require(__dirname + '/../src/motor.js');
+motor.start(process.argv);
