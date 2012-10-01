@@ -16,7 +16,7 @@ Motor = (function() {
         str += 'Razor.Templates = {};\n';
         str += 'Razor.render = function(name, args) {\n';
         str += '    if (Razor.Templates[name]) {\n';
-        str += '        return Razor.Templates[name].call(Razor, args);\n';
+        str += '        return Razor.Templates[name].call(Razor, args || {});\n';
         str += '    }\n';
         str += '    return \'\';\n';
         str += '};\n\n';
