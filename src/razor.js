@@ -34,12 +34,15 @@ Razor = (function() {
                 bit = bit.replace(first_word, '');
                 line_ending = ';';
 
+                if (first_word == 'elseif') {
+                    first_word = 'else if';
+                }
+
                 switch (first_word) {
                     case 'case':
                         line_ending = ':';
                         break;
-                    case 'elseif':
-                        first_word = 'else if';
+                    case 'else if':
                     case 'if':
                     case 'else':
                     case 'for':
