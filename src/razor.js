@@ -76,9 +76,8 @@ Razor = (function() {
             start = !start ? 'var t = ' : 't += ';
             code.push(_indent(indent) + start + '\'' + bit.replace(/\'/g, "\\'").replace(/\n/g, '').replace(/_QUOTE_/g, "'") + '\'' + ';\n');
         }
-        code.push('return t;');
-console.log(code);
 
+        code.push('return t;');
         return code.join('');
     }
 
