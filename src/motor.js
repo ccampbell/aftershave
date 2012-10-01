@@ -12,7 +12,7 @@ Motor = (function() {
     }
 
     function _startOutput() {
-        var str = 'Razor = Razor || {};\n';
+        var str = 'Razor = window.Razor || {};\n';
         str += 'Razor.Templates = {};\n';
         str += 'Razor.render = function(name, args) {\n';
         str += '    if (Razor.Templates[name]) {\n';
