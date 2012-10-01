@@ -64,12 +64,15 @@ Razor = (function() {
                 }
 
                 code.push(_indent(indent) + first_word + bit.replace(/@/g, 'args.') + line_ending + '\n');
+
                 if (!expression) {
                     indent += 1;
                 }
+
                 if (first_word == 'break') {
                     indent -= 1;
                 }
+
                 continue;
             }
 
