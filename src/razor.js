@@ -5,10 +5,28 @@ Razor = (function() {
         return new Array(++count).join(' ');
     }
 
+    function _escape(string) {
+        return string.replace(/%([\w-]+)/g, 'this.escape(@$1)');
+    }
+
+    function _replaceArgs(string) {
+        return string.replace(/@([\w-]+)/g, function(match, arg) {
+            if (arg.indexOf('-') === -1) {
+                return 'args.' + arg;
+            }
+
+            return "args['" + arg + "']";
+        });
+    }
+
     function _templateToJavascript(string) {
 
-        // replace regular variables
-        string = string.replace(new RegExp(Razor.start + '=\\s*(.*?)\\s*' + Razor.end, 'g'), "_QUOTE_ + $1 + _QUOTE_").replace(/@/g, 'args.');
+        // replace inline variables
+        string = string.replace(new RegExp(Razor.start + '=\\s*(.*?);?\\s*' + Razor.end, 'g'), function(group, code) {
+            code = _replaceArgs(_escape(code));
+            code = "' + " + code + " + '";
+            return code.replace(/\'/g, '_QUOTE_');
+        });
 
         var regex = new RegExp(Razor.start + '\\s*(.*?):?\\s*' + Razor.end, 'g'),
             bits = string.split(regex),
@@ -63,7 +81,7 @@ Razor = (function() {
                     line_ending = '';
                 }
 
-                code.push(_indent(indent) + first_word + bit.replace(/@/g, 'args.') + line_ending + '\n');
+                code.push(_indent(indent) + first_word + _replaceArgs(_escape(bit)) + line_ending + '\n');
 
                 if (!expression) {
                     indent += 1;
