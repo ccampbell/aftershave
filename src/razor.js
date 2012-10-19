@@ -21,6 +21,8 @@ Razor = (function() {
 
     function _templateToJavascript(string) {
 
+        string = string.replace(/\s{2,}/g, ' ').replace(/> </g, '><');
+
         // replace inline variables
         string = string.replace(new RegExp(Razor.start + '=\\s*(.*?);?\\s*' + Razor.end, 'g'), function(group, code) {
             code = _replaceArgs(_escape(code));
