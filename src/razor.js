@@ -62,11 +62,15 @@ Razor = (function() {
                     case 'case':
                         line_ending = ':';
                         break;
-                    case 'else if':
                     case 'if':
-                    case 'else':
                     case 'for':
                     case 'switch':
+                        line_ending = ' {';
+                        break;
+                    case 'else if':
+                    case 'else':
+                        indent -= 1;
+                        first_word = '} ' + first_word;
                         line_ending = ' {';
                         break;
                 }
