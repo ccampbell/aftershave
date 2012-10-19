@@ -43,7 +43,7 @@ Razor = (function() {
             i;
 
         for (i = 0; i < length; i++) {
-            bit = bits[i].replace(/^\s+/, '').replace(/\s+$/, '');
+            bit = bits[i].replace(/^\n+/, '').replace(/\n+$/, '');
 
             if (!bit) {
                 continue;
