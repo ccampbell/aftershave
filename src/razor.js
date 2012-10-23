@@ -6,11 +6,11 @@ Razor = (function() {
     }
 
     function _escape(string) {
-        return string.replace(/%([\w-]+)/g, 'this.escape(@$1)');
+        return string.replace(/%([\w\-]+)/g, 'this.escape(@$1)');
     }
 
     function _replaceArgs(string) {
-        return string.replace(/@([\w-]+)/g, function(match, arg) {
+        return string.replace(/@([\w\-]+)/g, function(match, arg) {
             if (arg.indexOf('-') === -1) {
                 return 'args.' + arg;
             }
@@ -85,6 +85,13 @@ Razor = (function() {
 
                 if (expression && bit.charAt(bit.length - 1) == ';') {
                     line_ending = '';
+                }
+
+                // if the first line is an if statement or loop we need to make
+                // sure that t is defined for later
+                if (!start) {
+                    start = 'var t;\n\n';
+                    code.push(start);
                 }
 
                 code.push(_indent(indent) + first_word + _replaceArgs(_escape(bit)) + line_ending + '\n');
