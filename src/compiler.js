@@ -91,13 +91,6 @@ Compiler = (function() {
             console.log("| | | (_| |/ / (_) | |   ");
             console.log("|_|  \\__,_/___\\___/|_|   ");
 
- console.log("                            _     ");
- console.log("  ___ _ __ _   _ _ __   ___| |__  ");
- console.log(" / __| '__| | | | '_ \\ / __| '_ \\ ");
- console.log("| (__| |  | |_| | | | | (__| | | |");
- console.log(" \\___|_|   \\__,_|_| |_|\\___|_| |_|");
-
-
             console.log('v' + VERSION);
             console.log('');
             console.log('Usage:');
