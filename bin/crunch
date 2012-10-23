@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+var compiler = require(__dirname + '/../src/compiler.js');
+compiler.start(process.argv);

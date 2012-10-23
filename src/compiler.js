@@ -5,7 +5,7 @@ razor = require('./razor.js');
 start_output = '';
 output = '';
 
-Motor = (function() {
+Compiler = (function() {
     function _wrap(fn, name, first) {
         var code = (first ? '' : '\n') + 'Razor.Templates[\'' + name + '\'] = function(args) {\n';
         code += '    ' + fn.replace(/\n/g, '\n    ') + '\n};\n';
@@ -67,7 +67,7 @@ Motor = (function() {
                     return;
                 }
 
-                Motor.processFile(path);
+                Compiler.processFile(path);
             });
         },
 
@@ -91,6 +91,13 @@ Motor = (function() {
             console.log("| | | (_| |/ / (_) | |   ");
             console.log("|_|  \\__,_/___\\___/|_|   ");
 
+ console.log("                            _     ");
+ console.log("  ___ _ __ _   _ _ __   ___| |__  ");
+ console.log(" / __| '__| | | | '_ \\ / __| '_ \\ ");
+ console.log("| (__| |  | |_| | | | | (__| | | |");
+ console.log(" \\___|_|   \\__,_|_| |_|\\___|_| |_|");
+
+
             console.log('v' + VERSION);
             console.log('');
             console.log('Usage:');
@@ -110,12 +117,12 @@ exports.start = function(args) {
     args = args.slice(2);
 
     if (args.length === 0) {
-        Motor.showUsage('need to specify file or directory');
+        Compiler.showUsage('need to specify file or directory');
         return;
     }
 
     if (args.indexOf('--help') !== -1) {
-        Motor.showUsage();
+        Compiler.showUsage();
         return;
     }
 
@@ -128,7 +135,7 @@ exports.start = function(args) {
     }
 
     if (!output_file && args.length > 1) {
-        Motor.showUsage('no output file specified!');
+        Compiler.showUsage('no output file specified!');
         return;
     }
 
@@ -146,7 +153,7 @@ exports.start = function(args) {
     });
 
     if (files_to_process.length === 0) {
-        Motor.showUsage('no files to process!');
+        Compiler.showUsage('no files to process!');
         return;
     }
 
@@ -156,11 +163,11 @@ exports.start = function(args) {
 
     files_to_process.forEach(function(path, i) {
         if (fs.statSync(path).isDirectory()) {
-            Motor.processDirectory(path);
+            Compiler.processDirectory(path);
             return;
         }
-        Motor.processFile(path);
+        Compiler.processFile(path);
     });
 
-    Motor.writeToDisk(output_file);
+    Compiler.writeToDisk(output_file);
 };
