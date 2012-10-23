@@ -37,9 +37,9 @@ Compiler = (function() {
     }
 
     return {
-        processFile: function(src) {
-            if (src.split('.').pop() != 'rzml') {
-                console.warn('warning:', 'file ' + src + ' is not an .rzml file, skipping...');
+        processFile: function(src, match_regex) {
+            if (match_regex && !new RegExp(match_regex).test(src)) {
+                console.warn('warning:', 'file ' + src + ' does not match pattern: "' + match_regex + '", skipping...');
                 return;
             }
 
@@ -57,7 +57,7 @@ Compiler = (function() {
             output += _wrap(fn, name, first);
         },
 
-        processDirectory: function(src) {
+        processDirectory: function(src, match_regex) {
             fs.readdirSync(src).forEach(function(file) {
                 var path = src + '/' + file;
 
@@ -67,7 +67,7 @@ Compiler = (function() {
                     return;
                 }
 
-                Compiler.processFile(path);
+                Compiler.processFile(path, match_regex);
             });
         },
 
@@ -99,6 +99,7 @@ Compiler = (function() {
             console.log('Arguments:');
             console.log('--help                 show help');
             console.log('--output               js file to output compiled templates to');
+            console.log('--matches              specify regex pattern to match filename against');
         }
     };
 }) ();
@@ -119,12 +120,21 @@ exports.start = function(args) {
         return;
     }
 
-    var index = args.indexOf('--output'),
+    var output_index = args.indexOf('--output'),
+        match_index = args.indexOf('--matches'),
+        match_regex,
         output_file,
-        files_to_process = [];
+        files_to_process = [],
+        args_to_skip = [];
 
-    if (index !== -1) {
-        output_file = args[index + 1];
+    if (output_index !== -1) {
+        output_file = args[output_index + 1];
+        args_to_skip.push(output_index, output_index + 1);
+    }
+
+    if (match_index !== -1) {
+        match_regex = args[match_index + 1];
+        args_to_skip.push(match_index, match_index + 1);
     }
 
     if (!output_file && args.length > 1) {
@@ -133,7 +143,7 @@ exports.start = function(args) {
     }
 
     args.forEach(function(arg, i) {
-        if (index !== -1 && (i === index || i === (index + 1))) {
+        if (args_to_skip.indexOf(i) !== -1) {
             return;
         }
 
@@ -151,15 +161,15 @@ exports.start = function(args) {
     }
 
     if (!output_file && files_to_process.length == 1) {
-        output_file = files_to_process[0].replace('.rzml', '') + '.js';
+        output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '.js');
     }
 
     files_to_process.forEach(function(path, i) {
         if (fs.statSync(path).isDirectory()) {
-            Compiler.processDirectory(path);
+            Compiler.processDirectory(path, match_regex);
             return;
         }
-        Compiler.processFile(path);
+        Compiler.processFile(path, match_regex);
     });
 
     Compiler.writeToDisk(output_file);
