@@ -90,7 +90,7 @@ Razor = (function() {
                 // if the first line is an if statement or loop we need to make
                 // sure that t is defined for later
                 if (!start) {
-                    start = 'var t;\n\n';
+                    start = 'var t = \'\';\n\n';
                     code.push(start);
                 }
 
