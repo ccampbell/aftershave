@@ -158,7 +158,7 @@ exports.start = function(args) {
             return;
         }
 
-        if (!path.existsSync(arg)) {
+        if (!fs.existsSync(arg)) {
             console.warn('warning: ' + arg + ' is not a file or directory');
             return;
         }
