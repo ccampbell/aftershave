@@ -1,5 +1,7 @@
 
-Razor = (function() {
+var Razor = (function() {
+    'use strict';
+
     function _indent(count) {
         count *= 4;
         return new Array(++count).join(' ');

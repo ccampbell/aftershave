@@ -1,11 +1,14 @@
-VERSION = '0.25';
-fs = require('fs');
-path = require('path');
-razor = require('./razor.js');
-start_output = '';
-output = '';
+/*global console */
+var VERSION = '0.25',
+    fs = require('fs'),
+    path = require('path'),
+    razor = require('./razor.js'),
+    start_output = '',
+    output = '',
 
 Compiler = (function() {
+    'use strict';
+
     function _wrap(fn, name, first) {
         var code = (first ? '' : '\n') + 'Razor.Templates[\'' + name + '\'] = function(args) {\n';
         code += '    ' + fn.replace(/\n/g, '\n    ') + '\n};\n';
