@@ -1,6 +1,6 @@
 /* global console */
 /* jshint node:true  */
-var VERSION = '0.25',
+var VERSION = '0.2.5',
     fs = require('fs'),
     razor = require('./razor.js'),
     start_output = '',
