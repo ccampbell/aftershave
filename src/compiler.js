@@ -9,8 +9,16 @@ var VERSION = '0.2.5',
 Compiler = (function() {
     'use strict';
 
+    function _getStart(name) {
+        var start = 'Razor.Templates';
+        if (name.indexOf('-') === -1) {
+            return start += '.' + name;
+        }
+        return start += "['" + name + "']";
+    }
+
     function _wrap(fn, name, first) {
-        var code = (first ? '' : '\n') + 'Razor.Templates[\'' + name + '\'] = function(args) {\n';
+        var code = (first ? '' : '\n') + _getStart(name) + ' = function(args) {\n';
         code += '    ' + fn.replace(/\n/g, '\n    ') + '\n};\n';
         return code;
     }

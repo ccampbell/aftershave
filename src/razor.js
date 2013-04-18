@@ -17,7 +17,7 @@ var Razor = (function() {
                 return 'args.' + arg;
             }
 
-            return "args['" + arg + "']";
+            return 'args[\'' + arg + '\']';
         });
     }
 
