@@ -92,10 +92,10 @@ Compiler = (function() {
                 console.error('error:', message, '\n');
             }
 // Ivrit
-            console.log(" _ __ __ _ _______  _ __ ");
-            console.log("| '__/ _` |_  / _ \\| '__|");
-            console.log("| | | (_| |/ / (_) | |   ");
-            console.log("|_|  \\__,_/___\\___/|_|   ");
+            console.log(' _ __ __ _ _______  _ __ ');
+            console.log('| \'__/ _` |_  / _ \\| \'__|');
+            console.log('| | | (_| |/ / (_) | |   ');
+            console.log('|_|  \\__,_/___\\___/|_|   ');
 
             console.log('v' + VERSION);
             console.log('');
