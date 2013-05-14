@@ -174,7 +174,7 @@ exports.start = function(args) {
         return;
     }
 
-    if (!output_file && files_to_process.length == 1) {
+    if (!output_file && files_to_process.length === 1) {
         output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
