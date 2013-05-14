@@ -56,7 +56,7 @@ var Razor = (function() {
                 bit = bit.replace(first_word, '');
                 line_ending = ';';
 
-                if (first_word == 'elseif') {
+                if (first_word === 'elseif') {
                     first_word = 'else if';
                 }
 
@@ -83,9 +83,9 @@ var Razor = (function() {
                     continue;
                 }
 
-                expression = line_ending == ';';
+                expression = line_ending === ';';
 
-                if (expression && bit.charAt(bit.length - 1) == ';') {
+                if (expression && bit.charAt(bit.length - 1) === ';') {
                     line_ending = '';
                 }
 
@@ -102,7 +102,7 @@ var Razor = (function() {
                     indent += 1;
                 }
 
-                if (first_word == 'break') {
+                if (first_word === 'break') {
                     indent -= 1;
                 }
 
