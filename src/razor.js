@@ -1,4 +1,4 @@
-
+/* jshint node: true */
 var Razor = (function() {
     'use strict';
 

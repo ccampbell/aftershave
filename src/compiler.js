@@ -1,7 +1,7 @@
-/*global console */
+/* jshint node: true */
+/* global console */
 var VERSION = '0.25',
     fs = require('fs'),
-    path = require('path'),
     razor = require('./razor.js'),
     start_output = '',
     output = '',
@@ -178,7 +178,7 @@ exports.start = function(args) {
         output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
-    files_to_process.forEach(function(path, i) {
+    files_to_process.forEach(function(path) {
         if (fs.statSync(path).isDirectory()) {
             Compiler.processDirectory(path, match_regex);
             return;

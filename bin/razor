@@ -1,3 +1,4 @@
 #!/usr/bin/env node
+/* jshint node: true */
 var compiler = require(__dirname + '/../src/compiler.js');
 compiler.start(process.argv);
