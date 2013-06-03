@@ -1,6 +1,6 @@
+/* jshint node: true */
 /* global console */
-/* jshint node:true  */
-var VERSION = '0.2.5',
+var VERSION = '0.3.0',
     fs = require('fs'),
     razor = require('./razor.js'),
     start_output = '',
@@ -100,10 +100,10 @@ Compiler = (function() {
                 console.error('error:', message, '\n');
             }
 // Ivrit
-            console.log(" _ __ __ _ _______  _ __ ");
-            console.log("| '__/ _` |_  / _ \\| '__|");
-            console.log("| | | (_| |/ / (_) | |   ");
-            console.log("|_|  \\__,_/___\\___/|_|   ");
+            console.log(' _ __ __ _ _______  _ __ ');
+            console.log('| \'__/ _` |_  / _ \\| \'__|');
+            console.log('| | | (_| |/ / (_) | |   ');
+            console.log('|_|  \\__,_/___\\___/|_|   ');
 
             console.log('v' + VERSION);
             console.log('');
@@ -182,7 +182,7 @@ exports.start = function(args) {
         return;
     }
 
-    if (!output_file && files_to_process.length == 1) {
+    if (!output_file && files_to_process.length === 1) {
         output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
