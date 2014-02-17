@@ -9,7 +9,7 @@ function Compiler() {
     'use strict';
     var self = this;
 
-    var start_output = '';
+    var startOutput = '';
     var output = '';
 
     function _getStart(name) {
@@ -64,16 +64,16 @@ function Compiler() {
         return str;
     }
 
-    self.processFile = function(src, match_regex) {
-        if (match_regex && !new RegExp(match_regex).test(src)) {
-            console.warn('warning:', 'file ' + src + ' does not match pattern: "' + match_regex + '", skipping...');
+    self.processFile = function(src, matchRegex) {
+        if (matchRegex && !new RegExp(matchRegex).test(src)) {
+            console.warn('warning:', 'file ' + src + ' does not match pattern: "' + matchRegex + '", skipping...');
             return;
         }
 
         var first = false;
 
-        if (!start_output) {
-            start_output = _startOutput();
+        if (!startOutput) {
+            startOutput = _startOutput();
             first = true;
         }
 
@@ -84,7 +84,7 @@ function Compiler() {
         output += _wrap(fn, name, first);
     };
 
-    self.processDirectory = function(src, match_regex) {
+    self.processDirectory = function(src, matchRegex) {
         fs.readdirSync(src).forEach(function(file) {
             var path = src + '/' + file;
 
@@ -94,16 +94,16 @@ function Compiler() {
                 return;
             }
 
-            self.processFile(path, match_regex);
+            self.processFile(path, matchRegex);
         });
     };
 
     self.writeToDisk = function(dest) {
         if (!self.alone && output.indexOf('this.escape(') !== -1) {
-            start_output += _getEscape();
+            startOutput += _getEscape();
         }
 
-        var contents = start_output + '\n' + output + '\n' + _endOutput();
+        var contents = startOutput + '\n' + output + '\n' + _endOutput();
         contents = contents.replace(/ +(?=\n)/g, '');
 
         if (self.ugly) {
@@ -111,28 +111,28 @@ function Compiler() {
         }
 
         fs.writeFileSync(dest, contents, 'UTF-8');
-        start_output = '';
+        startOutput = '';
         output = '';
     };
 
-     self.process = function(files_to_process, output_file, minimize, match_regex) {
-        if (!output_file && files_to_process.length === 1) {
-            output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
+     self.process = function(filesToProcess, outputFile, minimize, matchRegex) {
+        if (!outputFile && filesToProcess.length === 1) {
+            outputFile = filesToProcess[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
         }
 
         if (minimize) {
             self.ugly = true;
         }
 
-        files_to_process.forEach(function(path) {
+        filesToProcess.forEach(function(path) {
             if (fs.statSync(path).isDirectory()) {
-                self.processDirectory(path, match_regex);
+                self.processDirectory(path, matchRegex);
                 return;
             }
-            self.processFile(path, match_regex);
+            self.processFile(path, matchRegex);
         });
 
-        self.writeToDisk(output_file);
+        self.writeToDisk(outputFile);
     };
 
     self.showUsage = function(message) {
@@ -181,42 +181,42 @@ exports.start = function(args) {
         return;
     }
 
-    var output_index = args.indexOf('--output'),
-        match_index = args.indexOf('--matches'),
-        alone_index = args.indexOf('--forever-alone'),
-        ugly_index = args.indexOf('--ugly'),
-        match_regex,
-        output_file,
-        files_to_process = [],
-        args_to_skip = [];
+    var outputIndex = args.indexOf('--output'),
+        matchIndex = args.indexOf('--matches'),
+        aloneIndex = args.indexOf('--forever-alone'),
+        uglyIndex = args.indexOf('--ugly'),
+        matchRegex,
+        outputFile,
+        filesToProcess = [],
+        argsToSkip = [];
 
-    if (output_index !== -1) {
-        output_file = args[output_index + 1];
-        args_to_skip.push(output_index, output_index + 1);
+    if (outputIndex !== -1) {
+        outputFile = args[outputIndex + 1];
+        argsToSkip.push(outputIndex, outputIndex + 1);
     }
 
-    if (match_index !== -1) {
-        match_regex = args[match_index + 1];
-        args_to_skip.push(match_index, match_index + 1);
+    if (matchIndex !== -1) {
+        matchRegex = args[matchIndex + 1];
+        argsToSkip.push(matchIndex, matchIndex + 1);
     }
 
-    if (alone_index !== -1) {
+    if (aloneIndex !== -1) {
         compiler.alone = true;
-        args_to_skip.push(alone_index);
+        argsToSkip.push(aloneIndex);
     }
 
-    if (ugly_index !== -1) {
+    if (uglyIndex !== -1) {
         compiler.ugly = true;
-        args_to_skip.push(ugly_index);
+        argsToSkip.push(uglyIndex);
     }
 
-    if (!output_file && (args.length - args_to_skip.length) > 1) {
+    if (!outputFile && (args.length - argsToSkip.length) > 1) {
         compiler.showUsage('no output file specified!');
         return;
     }
 
     args.forEach(function(arg, i) {
-        if (args_to_skip.indexOf(i) !== -1) {
+        if (argsToSkip.indexOf(i) !== -1) {
             return;
         }
 
@@ -225,13 +225,13 @@ exports.start = function(args) {
             return;
         }
 
-        files_to_process.push(arg);
+        filesToProcess.push(arg);
     });
 
-    if (files_to_process.length === 0) {
+    if (filesToProcess.length === 0) {
         compiler.showUsage('no files to process!');
         return;
     }
 
-    compiler.process(files_to_process, output_file, null, match_regex);
+    compiler.process(filesToProcess, outputFile, null, matchRegex);
 };
