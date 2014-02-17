@@ -1,13 +1,16 @@
 /* jshint node: true */
 /* global console */
+var uglify = require('uglify-js');
 var VERSION = '0.3.0',
     fs = require('fs'),
-    razor = require('./razor.js'),
-    start_output = '',
-    output = '',
+    razor = require('./razor.js');
 
-Compiler = (function() {
+function Compiler() {
     'use strict';
+    var self = this;
+
+    var start_output = '';
+    var output = '';
 
     function _getStart(name) {
         var start = 'Razor.Templates';
@@ -28,7 +31,7 @@ Compiler = (function() {
         str += '(function() {\n';
         str += '    var Razor = {};\n';
 
-        if (!Compiler.alone) {
+        if (!self.alone) {
             str += '    Razor.Templates = {};\n';
             str += '    Razor.render = function(name, args) {\n';
             str += '        if (Razor.Templates[name]) {\n';
@@ -61,108 +64,117 @@ Compiler = (function() {
         return str;
     }
 
-    return {
-        processFile: function(src, match_regex) {
-            if (match_regex && !new RegExp(match_regex).test(src)) {
-                console.warn('warning:', 'file ' + src + ' does not match pattern: "' + match_regex + '", skipping...');
+    self.processFile = function(src, match_regex) {
+        if (match_regex && !new RegExp(match_regex).test(src)) {
+            console.warn('warning:', 'file ' + src + ' does not match pattern: "' + match_regex + '", skipping...');
+            return;
+        }
+
+        var first = false;
+
+        if (!start_output) {
+            start_output = _startOutput();
+            first = true;
+        }
+
+        var contents = fs.readFileSync(src, 'UTF-8'),
+            fn = razor.generate(contents),
+            name = src.split('/').pop().split('.')[0];
+
+        output += _wrap(fn, name, first);
+    }
+
+    self.processDirectory = function(src, match_regex) {
+        fs.readdirSync(src).forEach(function(file) {
+            var path = src + '/' + file;
+
+            if (fs.statSync(path).isDirectory()) {
+
+                // ignore subdirectories
                 return;
             }
 
-            var first = false;
+            self.processFile(path, match_regex);
+        });
+    }
 
-            if (!start_output) {
-                start_output = _startOutput();
-                first = true;
-            }
-
-            var contents = fs.readFileSync(src, 'UTF-8'),
-                fn = razor.generate(contents),
-                name = src.split('/').pop().split('.')[0];
-
-            output += _wrap(fn, name, first);
-        },
-
-        processDirectory: function(src, match_regex) {
-            fs.readdirSync(src).forEach(function(file) {
-                var path = src + '/' + file;
-
-                if (fs.statSync(path).isDirectory()) {
-
-                    // ignore subdirectories
-                    return;
-                }
-
-                Compiler.processFile(path, match_regex);
-            });
-        },
-
-        writeToDisk: function(dest) {
-            if (!this.alone && output.indexOf('this.escape(') !== -1) {
-                start_output += _getEscape();
-            }
-            var contents = start_output + '\n' + output + '\n' + _endOutput();
-            fs.writeFileSync(dest, contents.replace(/ +(?=\n)/g, ''), 'UTF-8');
-            start_output = '';
-            output = '';
-        },
-
-        process: function(files_to_process, output_file, match_regex) {
-            files_to_process.forEach(function(path) {
-                if (fs.statSync(path).isDirectory()) {
-                    Compiler.processDirectory(path, match_regex);
-                    return;
-                }
-                Compiler.processFile(path, match_regex);
-            });
-
-            Compiler.writeToDisk(output_file);
-        },
-
-        showUsage: function(message) {
-            if (message) {
-                console.error('error:', message, '\n');
-            }
-// Ivrit
-            console.log(' _ __ __ _ _______  _ __ ');
-            console.log('| \'__/ _` |_  / _ \\| \'__|');
-            console.log('| | | (_| |/ / (_) | |   ');
-            console.log('|_|  \\__,_/___\\___/|_|   ');
-
-            console.log('v' + VERSION);
-            console.log('');
-            console.log('Usage:');
-            console.log('razor file1.html file2.html directory1 --output templates.js');
-            console.log('razor templates --matches "(.*).html"');
-            console.log('');
-            console.log('Arguments:');
-            console.log('--help                 show help');
-            console.log('--output               js file to output compiled templates to');
-            console.log('--matches              specify regex pattern to match filename against');
-            console.log('--forever-alone        compile templates on their own without helper functions');
+    self.writeToDisk = function(dest) {
+        if (!self.alone && output.indexOf('this.escape(') !== -1) {
+            start_output += _getEscape();
         }
-    };
-}) ();
+        var contents = start_output + '\n' + output + '\n' + _endOutput();
+
+        if (self.ugly) {
+            contents = uglify.minify(contents, {fromString: true}).code;
+        }
+
+        fs.writeFileSync(dest, contents, 'UTF-8');
+        start_output = '';
+        output = '';
+    }
+
+     self.process = function(files_to_process, output_file, match_regex) {
+        files_to_process.forEach(function(path) {
+            if (fs.statSync(path).isDirectory()) {
+                self.processDirectory(path, match_regex);
+                return;
+            }
+            self.processFile(path, match_regex);
+        });
+
+        self.writeToDisk(output_file);
+    }
+
+    self.showUsage = function(message) {
+        if (message) {
+            console.error('error:', message, '\n');
+        }
+// Ivrit
+        console.log(' _ __ __ _ _______  _ __ ');
+        console.log('| \'__/ _` |_  / _ \\| \'__|');
+        console.log('| | | (_| |/ / (_) | |   ');
+        console.log('|_|  \\__,_/___\\___/|_|   ');
+
+        console.log('v' + VERSION);
+        console.log('');
+        console.log('Usage:');
+        console.log('razor file1.html file2.html directory1 --output templates.js');
+        console.log('razor templates --matches "(.*).html"');
+        console.log('');
+        console.log('Arguments:');
+        console.log('--help                 show help');
+        console.log('--output               js file to output compiled templates to');
+        console.log('--matches              specify regex pattern to match filename against');
+        console.log('--forever-alone        compile templates on their own without helper functions');
+        console.log('--ugly                 run the resulting code through uglify to minimize it');
+    }
+
+    return self;
+}
 
 /**
  * this is just fancy stuff to make the command line interface friendly
  */
-exports.process = Compiler.process;
+exports.process = new Compiler().process;
 exports.start = function(args) {
+    var compiler = new Compiler();
+
     args = args.slice(2);
 
     if (args.length === 0) {
-        Compiler.showUsage('need to specify file or directory');
+        compiler.showUsage('need to specify file or directory');
         return;
     }
 
     if (args.indexOf('--help') !== -1) {
-        Compiler.showUsage();
+        compiler.showUsage();
         return;
     }
 
     var output_index = args.indexOf('--output'),
         match_index = args.indexOf('--matches'),
         alone_index = args.indexOf('--forever-alone'),
+        ugly_index = args.indexOf('--ugly'),
         match_regex,
         output_file,
         files_to_process = [],
@@ -179,12 +191,17 @@ exports.start = function(args) {
     }
 
     if (alone_index !== -1) {
-        Compiler.alone = true;
+        compiler.alone = true;
         args_to_skip.push(alone_index);
     }
 
+    if (ugly_index !== -1) {
+        compiler.ugly = true;
+        args_to_skip.push(ugly_index);
+    }
+
     if (!output_file && (args.length - args_to_skip.length) > 1) {
-        Compiler.showUsage('no output file specified!');
+        compiler.showUsage('no output file specified!');
         return;
     }
 
@@ -202,7 +219,7 @@ exports.start = function(args) {
     });
 
     if (files_to_process.length === 0) {
-        Compiler.showUsage('no files to process!');
+        compiler.showUsage('no files to process!');
         return;
     }
 
@@ -210,5 +227,5 @@ exports.start = function(args) {
         output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
-    Compiler.process(files_to_process, output_file, match_regex);
+    compiler.process(files_to_process, output_file, match_regex);
 };
