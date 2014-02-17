@@ -18,7 +18,7 @@ var Razor = (function() {
     }
 
     function _escape(string) {
-        return string.replace(/%([\w\-]+)/g, 'this.escape(@$1)');
+        return string.replace(/\$\$([\w\-]+)/g, "this.escape($$$1)");
     }
 
     function _templateNameFromView(view) {
