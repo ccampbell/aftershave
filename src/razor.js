@@ -38,6 +38,7 @@ var Razor = (function() {
             bits = string.split(regex),
             length = bits.length,
             bit,
+            line,
             start,
             line_ending,
             code = [],
@@ -47,15 +48,15 @@ var Razor = (function() {
             i;
 
         for (i = 0; i < length; i++) {
-            bit = bits[i].replace(/^\n+/, '').replace(/\n+$/, '');
+            line = bits[i].replace(/^\n+/, '').replace(/\n+$/, '');
 
-            if (!bit) {
+            if (!line) {
                 continue;
             }
 
             if (i % 2) {
-                first_word = bit.split(' ')[0];
-                bit = bit.replace(first_word, '');
+                first_word = line.split(' ')[0];
+                bit = line.replace(first_word, '');
                 line_ending = ';';
 
                 if (first_word === 'elseif') {
@@ -98,6 +99,14 @@ var Razor = (function() {
                     code.push(start);
                 }
 
+                // special case for rendering sub views
+                if (first_word === 'render' || first_word.indexOf('render(') === 0) {
+                    var matches = /render\s*\((['"])(.*?)\1(,(.*?)$)?/.exec(line);
+                    var templateName = matches[2].split('.')[0];
+                    code.push(_indent(indent) + 't += this.' + _replaceArgs(line.replace(matches[2], templateName)) + line_ending + '\n');
+                    continue;
+                }
+
                 code.push(_indent(indent) + first_word + _replaceArgs(_escape(bit)) + line_ending + '\n');
 
                 if (!expression) {
@@ -112,7 +121,7 @@ var Razor = (function() {
             }
 
             start = !start ? 'var t = ' : 't += ';
-            code.push(_indent(indent) + start + '\'' + bit.replace(/\'/g, "\\'").replace(/\n/g, '').replace(/_QUOTE_/g, "'") + '\'' + ';\n');
+            code.push(_indent(indent) + start + '\'' + line.replace(/\'/g, "\\'").replace(/\n/g, '').replace(/_QUOTE_/g, "'") + '\'' + ';\n');
         }
 
         code.push('return t;');
