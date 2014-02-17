@@ -97,13 +97,10 @@ var Razor = (function() {
                 }
 
                 if (first_word.indexOf('end') === 0) {
-                    if (extend) {
-                        extend.level--;
-                        if (extend.level === 0) {
-                            code.push(_indent(indent) + 't += this.render(\'' + extend.templateName + '\', {' + extend.variableName + ': ' + extend.variableName + '});\n');
-                            extend = false;
-                            continue;
-                        }
+                    if (extend && --extend.level === 0) {
+                        code.push(_indent(indent) + 't += this.render(\'' + extend.templateName + '\', {' + extend.variableName + ': ' + extend.variableName + '});\n');
+                        extend = false;
+                        continue;
                     }
 
                     indent -= 1;
