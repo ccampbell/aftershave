@@ -14,7 +14,7 @@ var Razor = (function() {
     }
 
     function _replaceArgs(string) {
-        return string.replace(/@([\w\-]+)/g, function(match, arg) {
+        return string.replace(/\$([\w\-]+)/g, function(match, arg) {
             if (arg.indexOf('-') === -1) {
                 return 'args.' + arg;
             }
