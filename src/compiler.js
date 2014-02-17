@@ -116,6 +116,10 @@ function Compiler() {
     };
 
      self.process = function(filesToProcess, outputFile, minimize, matchRegex) {
+        if (typeof filesToProcess === 'string') {
+            filesToProcess = [filesToProcess];
+        }
+
         if (!outputFile && filesToProcess.length === 1) {
             outputFile = filesToProcess[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
         }
