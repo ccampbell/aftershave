@@ -1,7 +1,7 @@
 /* jshint node: true */
 /* global console */
 var uglify = require('uglify-js');
-var VERSION = '0.3.0',
+var VERSION = '0.4.0',
     fs = require('fs'),
     razor = require('./razor.js');
 
