@@ -56,7 +56,7 @@ var Razor = (function() {
             i;
 
         for (i = 0; i < length; i++) {
-            line = bits[i].replace(/^\n+/, '').replace(/\n+$/, '');
+            line = bits[i].replace(/^\s+/, '').replace(/\s+$/, '');
 
             if (!line) {
                 continue;
