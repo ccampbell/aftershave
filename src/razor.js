@@ -118,8 +118,8 @@ var Razor = (function() {
     }
 
     return {
-        start: '\\<\\?',
-        end: '\\?\\>',
+        start: '{%',
+        end: '%}',
 
         generate: function(string) {
             return _templateToJavascript(string);
