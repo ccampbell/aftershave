@@ -1,5 +1,6 @@
 /* jshint node:true */
 var compiler = require('./compiler.js');
+var path = require('path');
 
 var Razor = (function() {
     'use strict';
@@ -21,8 +22,12 @@ var Razor = (function() {
         return string.replace(/\$\$([\w\-]+)/g, "this.escape($$$1)");
     }
 
-    function _templateNameFromView(view) {
+    function _templateNameFromPath(view) {
         view = _trim(view);
+
+        // take just the end of the path
+        view = path.basename(view);
+
         var bits = view.split('.');
 
         // no extension included
@@ -140,14 +145,14 @@ var Razor = (function() {
 
                 // special case for extending views
                 if (firstWord === 'extend') {
-                    extend = _templateNameFromView(_stripQuotes(bit));
+                    extend = _templateNameFromPath(_stripQuotes(bit));
                     continue;
                 }
 
                 // special case for rendering sub views
                 if (firstWord === 'render' || firstWord.indexOf('render(') === 0) {
                     matches = /render\s*\(\s*(['"])(.*?)\1(,(.*?)$)?/.exec(line);
-                    var templateName = _templateNameFromView(matches[2]);
+                    var templateName = _templateNameFromPath(matches[2]);
                     code.push(_indent(indent) + activeVar + ' += this.' + _replaceArgs(line.replace(matches[2], templateName)) + lineEnding + '\n');
                     continue;
                 }
@@ -207,6 +212,10 @@ var Razor = (function() {
 
         compile: function(string) {
             return new Function(string);
+        },
+
+        templateNameFromPath: function(path) {
+            return _templateNameFromPath(path);
         },
 
         process: compiler.process

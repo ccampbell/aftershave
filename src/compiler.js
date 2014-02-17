@@ -14,7 +14,7 @@ function Compiler() {
 
     function _getStart(name) {
         var start = 'Razor.templates';
-        if (name.indexOf('-') === -1) {
+        if (name.indexOf('-') === -1 && name.indexOf('.') === -1) {
             return start += '.' + name;
         }
         return start += "['" + name + "']";
@@ -79,7 +79,7 @@ function Compiler() {
 
         var contents = fs.readFileSync(src, 'UTF-8'),
             fn = razor.generate(contents),
-            name = src.split('/').pop().split('.')[0];
+            name = razor.templateNameFromPath(src);
 
         output += _wrap(fn, name, first);
     };
