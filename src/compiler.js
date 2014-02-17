@@ -13,7 +13,7 @@ function Compiler() {
     var output = '';
 
     function _getStart(name) {
-        var start = 'Razor.Templates';
+        var start = 'Razor.templates';
         if (name.indexOf('-') === -1) {
             return start += '.' + name;
         }
@@ -32,10 +32,10 @@ function Compiler() {
         str += '    var Razor = {};\n';
 
         if (!self.alone) {
-            str += '    Razor.Templates = {};\n';
+            str += '    Razor.templates = {};\n';
             str += '    Razor.render = function(name, args) {\n';
-            str += '        if (Razor.Templates[name]) {\n';
-            str += '            return Razor.Templates[name].call(Razor, args || {});\n';
+            str += '        if (Razor.templates[name]) {\n';
+            str += '            return Razor.templates[name].call(Razor, args || {});\n';
             str += '        }\n';
             str += '        return \'\';\n';
             str += '    };\n';
