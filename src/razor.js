@@ -61,6 +61,7 @@ var Razor = (function() {
         });
 
         var regex = new RegExp('{%\\s*(.*?):?\\s*%}', 'g'),
+            functionRegex = /([a-zA-Z0-9_]+)?\s*\((.*)\)/,
             bits = string.split(regex),
             length = bits.length,
             matches,
@@ -149,11 +150,20 @@ var Razor = (function() {
                     continue;
                 }
 
-                // special case for rendering sub views
-                if (firstWord === 'render' || firstWord.indexOf('render(') === 0) {
-                    matches = /render\s*\(\s*(['"])(.*?)\1(,(.*?)$)?/.exec(line);
-                    var templateName = _templateNameFromPath(matches[2]);
-                    code.push(_indent(indent) + activeVar + ' += this.' + _replaceArgs(line.replace(matches[2], templateName)) + lineEnding + '\n');
+                // render helper functions
+                if (expression && functionRegex.test(line)) {
+                    matches = functionRegex.exec(line);
+                    var functionName = matches[1];
+                    var functionArgs = matches[2].split(',');
+
+                    // special for render
+                    functionName = 'this.helpers.' + functionName;
+                    if (matches[1] === 'render') {
+                        functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/, '')) + '\'';
+                        functionName = 'this.render';
+                    }
+
+                    code.push(_indent(indent) + activeVar + ' += ' + functionName + '(' + _replaceArgs(functionArgs.join(',')) + ')' +lineEnding + '\n');
                     continue;
                 }
 

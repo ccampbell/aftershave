@@ -64,6 +64,11 @@ function Compiler() {
         return str;
     }
 
+    function _getHelpers() {
+        var str = '    Razor.helpers = {};\n';
+        return str;
+    }
+
     self.processFile = function(src, matchRegex) {
         if (matchRegex && !new RegExp(matchRegex).test(src)) {
             console.warn('warning:', 'file ' + src + ' does not match pattern: "' + matchRegex + '", skipping...');
@@ -101,6 +106,10 @@ function Compiler() {
     self.writeToDisk = function(dest) {
         if (!self.alone && output.indexOf('this.escape(') !== -1) {
             startOutput += _getEscape();
+        }
+
+        if (!self.alone && output.indexOf('this.helpers.') !== -1) {
+            startOutput += _getHelpers();
         }
 
         var contents = startOutput + '\n' + output + '\n' + _endOutput();
