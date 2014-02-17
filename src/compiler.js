@@ -102,7 +102,9 @@ function Compiler() {
         if (!self.alone && output.indexOf('this.escape(') !== -1) {
             start_output += _getEscape();
         }
+
         var contents = start_output + '\n' + output + '\n' + _endOutput();
+        contents = contents.replace(/ +(?=\n)/g, '');
 
         if (self.ugly) {
             contents = uglify.minify(contents, {fromString: true}).code;
