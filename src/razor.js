@@ -144,7 +144,7 @@ var Razor = (function() {
                 }
 
                 // special case for extending views
-                if (firstWord === 'extend') {
+                if (firstWord === 'extend' || firstWord === 'extends') {
                     extend = _templateNameFromPath(_stripQuotes(bit));
                     continue;
                 }
