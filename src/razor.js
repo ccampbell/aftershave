@@ -100,6 +100,7 @@ var Razor = (function() {
                     if (extend && --extend.level === 0) {
                         code.push(_indent(indent) + 't += this.render(\'' + extend.templateName + '\', {' + extend.variableName + ': ' + extend.variableName + '});\n');
                         extend = false;
+                        activeVar = 't';
                         continue;
                     }
 
