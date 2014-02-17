@@ -1,6 +1,6 @@
 /* jshint node:true */
-var compiler = require('./compiler.js');
 var path = require('path');
+var compiler;
 
 var Razor = (function() {
     'use strict';
@@ -218,7 +218,12 @@ var Razor = (function() {
             return _templateNameFromPath(path);
         },
 
-        process: compiler.process
+        process: function() {
+            if (!compiler) {
+                compiler = require('./compiler.js');
+            }
+            compiler.process.apply(compiler, arguments);
+        }
     };
 }) ();
 
