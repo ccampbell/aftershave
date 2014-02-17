@@ -113,7 +113,11 @@ function Compiler() {
         output = '';
     };
 
-     self.process = function(files_to_process, output_file, match_regex) {
+     self.process = function(files_to_process, output_file, minimize, match_regex) {
+        if (minimize) {
+            self.ugly = true;
+        }
+
         files_to_process.forEach(function(path) {
             if (fs.statSync(path).isDirectory()) {
                 self.processDirectory(path, match_regex);
@@ -227,5 +231,5 @@ exports.start = function(args) {
         output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
-    compiler.process(files_to_process, output_file, match_regex);
+    compiler.process(files_to_process, output_file, null, match_regex);
 };
