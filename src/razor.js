@@ -13,6 +13,10 @@ var Razor = (function() {
         return string.replace(/%([\w\-]+)/g, 'this.escape(@$1)');
     }
 
+    function _templateNameFromView(view) {
+        return view.split('.')[0];
+    }
+
     function _replaceArgs(string) {
         return string.replace(/\$([\w\-]+)/g, function(match, arg) {
             if (arg.indexOf('-') === -1) {
@@ -37,13 +41,17 @@ var Razor = (function() {
         var regex = new RegExp('{%\\s*(.*?):?\\s*%}', 'g'),
             bits = string.split(regex),
             length = bits.length,
+            matches,
             bit,
             line,
             start,
+            definedVars = {},
+            activeVar = 't',
             line_ending,
             code = [],
             first_word,
             expression,
+            extend,
             indent = 0,
             i;
 
@@ -80,9 +88,26 @@ var Razor = (function() {
                         break;
                 }
 
+                // if the first line is an if statement or loop we need to make
+                // sure that t is defined for later
+                if (!start) {
+                    start = 'var ' + activeVar + ' = \'\';\n\n';
+                    definedVars[activeVar] = 1;
+                    code.push(start);
+                }
+
                 if (first_word.indexOf('end') === 0) {
+                    if (extend) {
+                        extend.level--;
+                        if (extend.level === 0) {
+                            code.push(_indent(indent) + 't += this.render(\'' + extend.templateName + '\', {' + extend.variableName + ': ' + extend.variableName + '});\n');
+                            extend = false;
+                            continue;
+                        }
+                    }
+
                     indent -= 1;
-                    code.push(_indent(indent) + '}\n\n');
+                    code.push(_indent(Math.max(indent, 0)) + '}\n\n');
                     continue;
                 }
 
@@ -92,19 +117,27 @@ var Razor = (function() {
                     line_ending = '';
                 }
 
-                // if the first line is an if statement or loop we need to make
-                // sure that t is defined for later
-                if (!start) {
-                    start = 'var t = \'\';\n\n';
-                    code.push(start);
+                // special case for extending views
+                if (first_word === 'extend' || first_word.indexOf('extend(') === 0) {
+                    matches = /extend\s*\((['"])(.*?)\1\s*,\s*\$(.*?)\)/.exec(line);
+                    extend = {};
+                    extend.level = 1;
+                    extend.templateName = _templateNameFromView(matches[2]);
+                    extend.variableName = matches[3];
+                    activeVar = extend.variableName;
+                    continue;
                 }
 
                 // special case for rendering sub views
                 if (first_word === 'render' || first_word.indexOf('render(') === 0) {
-                    var matches = /render\s*\((['"])(.*?)\1(,(.*?)$)?/.exec(line);
-                    var templateName = matches[2].split('.')[0];
-                    code.push(_indent(indent) + 't += this.' + _replaceArgs(line.replace(matches[2], templateName)) + line_ending + '\n');
+                    matches = /render\s*\((['"])(.*?)\1(,(.*?)$)?/.exec(line);
+                    var templateName = _templateNameFromView(matches[2]);
+                    code.push(_indent(indent) + activeVar + ' += this.' + _replaceArgs(line.replace(matches[2], templateName)) + line_ending + '\n');
                     continue;
+                }
+
+                if (extend) {
+                    extend.level++;
                 }
 
                 code.push(_indent(indent) + first_word + _replaceArgs(_escape(bit)) + line_ending + '\n');
@@ -120,7 +153,12 @@ var Razor = (function() {
                 continue;
             }
 
-            start = !start ? 'var t = ' : 't += ';
+            start = activeVar + ' += ';
+            if (!definedVars[activeVar]) {
+                start = 'var ' + activeVar + ' = ';
+                definedVars[activeVar] = 1;
+            }
+
             code.push(_indent(indent) + start + '\'' + line.replace(/\'/g, "\\'").replace(/\n/g, '').replace(/_QUOTE_/g, "'") + '\'' + ';\n');
         }
 
