@@ -106,6 +106,18 @@ Compiler = (function() {
             output = '';
         },
 
+        process: function(files_to_process, output_file, match_regex) {
+            files_to_process.forEach(function(path) {
+                if (fs.statSync(path).isDirectory()) {
+                    Compiler.processDirectory(path, match_regex);
+                    return;
+                }
+                Compiler.processFile(path, match_regex);
+            });
+
+            Compiler.writeToDisk(output_file);
+        },
+
         showUsage: function(message) {
             if (message) {
                 console.error('error:', message, '\n');
@@ -134,6 +146,7 @@ Compiler = (function() {
 /**
  * this is just fancy stuff to make the command line interface friendly
  */
+exports.process = Compiler.process;
 exports.start = function(args) {
     args = args.slice(2);
 
@@ -197,13 +210,5 @@ exports.start = function(args) {
         output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
-    files_to_process.forEach(function(path) {
-        if (fs.statSync(path).isDirectory()) {
-            Compiler.processDirectory(path, match_regex);
-            return;
-        }
-        Compiler.processFile(path, match_regex);
-    });
-
-    Compiler.writeToDisk(output_file);
+    Compiler.process(files_to_process, output_file, match_regex);
 };

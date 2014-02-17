@@ -1,4 +1,6 @@
 /* jshint node:true */
+var compiler = require('./compiler.js');
+
 var Razor = (function() {
     'use strict';
 
@@ -32,7 +34,7 @@ var Razor = (function() {
             return code.replace(/\'/g, '_QUOTE_');
         });
 
-        var regex = new RegExp(Razor.start + '\\s*(.*?):?\\s*' + Razor.end, 'g'),
+        var regex = new RegExp('{%\\s*(.*?):?\\s*%}', 'g'),
             bits = string.split(regex),
             length = bits.length,
             bit,
@@ -118,17 +120,16 @@ var Razor = (function() {
     }
 
     return {
-        start: '{%',
-        end: '%}',
-
         generate: function(string) {
             return _templateToJavascript(string);
         },
 
         compile: function(string) {
             return new Function(string);
-        }
+        },
+
+        process: compiler.process
     };
 }) ();
 
-exports.generate = Razor.generate;
+module.exports = Razor;
