@@ -116,7 +116,7 @@ var Razor = (function() {
 
                 // special case for extending views
                 if (first_word === 'extend' || first_word.indexOf('extend(') === 0) {
-                    matches = /extend\s*\((['"])(.*?)\1\s*,\s*\$(.*?)\)/.exec(line);
+                    matches = /extend\s*\(\s*(['"])(.*?)\1\s*,\s*\$(.*?)\)/.exec(line);
                     extend = {};
                     extend.level = 1;
                     extend.templateName = _templateNameFromView(matches[2]);
@@ -127,7 +127,7 @@ var Razor = (function() {
 
                 // special case for rendering sub views
                 if (first_word === 'render' || first_word.indexOf('render(') === 0) {
-                    matches = /render\s*\((['"])(.*?)\1(,(.*?)$)?/.exec(line);
+                    matches = /render\s*\(\s*(['"])(.*?)\1(,(.*?)$)?/.exec(line);
                     var templateName = _templateNameFromView(matches[2]);
                     code.push(_indent(indent) + activeVar + ' += this.' + _replaceArgs(line.replace(matches[2], templateName)) + line_ending + '\n');
                     continue;
