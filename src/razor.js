@@ -65,9 +65,9 @@ var Razor = (function() {
             definedVars = {},
             defaultVar = '_t',
             activeVar = defaultVar,
-            line_ending,
+            lineEnding,
             code = [],
-            first_word,
+            firstWord,
             expression,
             extend,
             block,
@@ -82,28 +82,28 @@ var Razor = (function() {
             }
 
             if (i % 2) {
-                first_word = line.split(' ')[0];
-                bit = line.replace(first_word, '');
-                line_ending = ';';
+                firstWord = line.split(' ')[0];
+                bit = line.replace(firstWord, '');
+                lineEnding = ';';
 
-                if (first_word === 'elseif') {
-                    first_word = 'else if';
+                if (firstWord === 'elseif') {
+                    firstWord = 'else if';
                 }
 
-                switch (first_word) {
+                switch (firstWord) {
                     case 'case':
-                        line_ending = ':';
+                        lineEnding = ':';
                         break;
                     case 'if':
                     case 'for':
                     case 'switch':
-                        line_ending = ' {';
+                        lineEnding = ' {';
                         break;
                     case 'else if':
                     case 'else':
                         indent -= 1;
-                        first_word = '} ' + first_word;
-                        line_ending = ' {';
+                        firstWord = '} ' + firstWord;
+                        lineEnding = ' {';
                         break;
                 }
 
@@ -115,7 +115,7 @@ var Razor = (function() {
                     code.push(start);
                 }
 
-                if (first_word.indexOf('end') === 0) {
+                if (firstWord.indexOf('end') === 0) {
                     if (block && --block === 0) {
                         activeVar = defaultVar;
                         continue;
@@ -126,29 +126,29 @@ var Razor = (function() {
                     continue;
                 }
 
-                expression = line_ending === ';';
+                expression = lineEnding === ';';
 
                 if (expression && bit.charAt(bit.length - 1) === ';') {
-                    line_ending = '';
+                    lineEnding = '';
                 }
 
-                if (first_word === 'block') {
+                if (firstWord === 'block') {
                     block = 1;
                     activeVar = _trim(_stripQuotes(bit).replace('$', ''));
                     continue;
                 }
 
                 // special case for extending views
-                if (first_word === 'extend') {
+                if (firstWord === 'extend') {
                     extend = _templateNameFromView(_stripQuotes(bit));
                     continue;
                 }
 
                 // special case for rendering sub views
-                if (first_word === 'render' || first_word.indexOf('render(') === 0) {
+                if (firstWord === 'render' || firstWord.indexOf('render(') === 0) {
                     matches = /render\s*\(\s*(['"])(.*?)\1(,(.*?)$)?/.exec(line);
                     var templateName = _templateNameFromView(matches[2]);
-                    code.push(_indent(indent) + activeVar + ' += this.' + _replaceArgs(line.replace(matches[2], templateName)) + line_ending + '\n');
+                    code.push(_indent(indent) + activeVar + ' += this.' + _replaceArgs(line.replace(matches[2], templateName)) + lineEnding + '\n');
                     continue;
                 }
 
@@ -156,13 +156,13 @@ var Razor = (function() {
                     block += 1;
                 }
 
-                code.push(_indent(indent) + first_word + _replaceArgs(_escape(bit)) + line_ending + '\n');
+                code.push(_indent(indent) + firstWord + _replaceArgs(_escape(bit)) + lineEnding + '\n');
 
                 if (!expression) {
                     indent += 1;
                 }
 
-                if (first_word === 'break') {
+                if (firstWord === 'break') {
                     indent -= 1;
                 }
 
