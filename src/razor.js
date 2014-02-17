@@ -46,7 +46,8 @@ var Razor = (function() {
             line,
             start,
             definedVars = {},
-            activeVar = 't',
+            defaultVar = '_t',
+            activeVar = defaultVar,
             line_ending,
             code = [],
             first_word,
@@ -98,9 +99,7 @@ var Razor = (function() {
 
                 if (first_word.indexOf('end') === 0) {
                     if (extend && --extend.level === 0) {
-                        code.push(_indent(indent) + 't += this.render(\'' + extend.templateName + '\', {' + extend.variableName + ': ' + extend.variableName + '});\n');
-                        extend = false;
-                        activeVar = 't';
+                        activeVar = defaultVar;
                         continue;
                     }
 
@@ -160,7 +159,17 @@ var Razor = (function() {
             code.push(_indent(indent) + start + '\'' + line.replace(/\'/g, "\\'").replace(/\n/g, '').replace(/_QUOTE_/g, "'") + '\'' + ';\n');
         }
 
-        code.push('return t;');
+        if (extend) {
+            var extendData = [];
+            for (var key in definedVars) {
+                if (key != defaultVar) {
+                    extendData.push(key + ': ' + key);
+                }
+            }
+            code.push(defaultVar + ' += this.render(\'' + extend.templateName + '\', {' + extendData.join(', ') + '});\n');
+        }
+
+        code.push('return ' + defaultVar + ';');
         return code.join('');
     }
 
