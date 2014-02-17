@@ -9,12 +9,29 @@ var Razor = (function() {
         return new Array(++count).join(' ');
     }
 
+    function _trim(string) {
+        return string.replace(/^\s+/, '').replace(/\s+$/, '');
+    }
+
+    function _stripQuotes(string) {
+        return string.replace(/['"]/g, '');
+    }
+
     function _escape(string) {
         return string.replace(/%([\w\-]+)/g, 'this.escape(@$1)');
     }
 
     function _templateNameFromView(view) {
-        return view.split('.')[0];
+        view = _trim(view);
+        var bits = view.split('.');
+
+        // no extension included
+        if (bits.length === 1) {
+            return bits[0];
+        }
+
+        bits.pop();
+        return bits.join('.');
     }
 
     function _replaceArgs(string) {
@@ -53,11 +70,12 @@ var Razor = (function() {
             first_word,
             expression,
             extend,
+            block,
             indent = 0,
             i;
 
         for (i = 0; i < length; i++) {
-            line = bits[i].replace(/^\s+/, '').replace(/\s+$/, '');
+            line = _trim(bits[i]);
 
             if (!line) {
                 continue;
@@ -98,7 +116,7 @@ var Razor = (function() {
                 }
 
                 if (first_word.indexOf('end') === 0) {
-                    if (extend && --extend.level === 0) {
+                    if (block && --block === 0) {
                         activeVar = defaultVar;
                         continue;
                     }
@@ -114,14 +132,15 @@ var Razor = (function() {
                     line_ending = '';
                 }
 
+                if (first_word === 'block') {
+                    block = 1;
+                    activeVar = _trim(_stripQuotes(bit).replace('$', ''));
+                    continue;
+                }
+
                 // special case for extending views
-                if (first_word === 'extend' || first_word.indexOf('extend(') === 0) {
-                    matches = /extend\s*\(\s*(['"])(.*?)\1\s*,\s*\$(.*?)\)/.exec(line);
-                    extend = {};
-                    extend.level = 1;
-                    extend.templateName = _templateNameFromView(matches[2]);
-                    extend.variableName = matches[3];
-                    activeVar = extend.variableName;
+                if (first_word === 'extend') {
+                    extend = _templateNameFromView(_stripQuotes(bit));
                     continue;
                 }
 
@@ -133,8 +152,8 @@ var Razor = (function() {
                     continue;
                 }
 
-                if (extend) {
-                    extend.level++;
+                if (block) {
+                    block += 1;
                 }
 
                 code.push(_indent(indent) + first_word + _replaceArgs(_escape(bit)) + line_ending + '\n');
@@ -166,7 +185,15 @@ var Razor = (function() {
                     extendData.push(key + ': ' + key);
                 }
             }
-            code.push(defaultVar + ' += this.render(\'' + extend.templateName + '\', {' + extendData.join(', ') + '});\n');
+
+            var renderCall = 'this.render(\'' + extend + '\', {' + extendData.join(', ') + '});\n';
+
+            // if no variables were set to extend then return this directly
+            if (extendData.length === 0) {
+                return renderCall;
+            }
+
+            code.push(defaultVar + ' += ' + renderCall);
         }
 
         code.push('return ' + defaultVar + ';');
