@@ -82,7 +82,7 @@ function Compiler() {
             name = src.split('/').pop().split('.')[0];
 
         output += _wrap(fn, name, first);
-    }
+    };
 
     self.processDirectory = function(src, match_regex) {
         fs.readdirSync(src).forEach(function(file) {
@@ -96,7 +96,7 @@ function Compiler() {
 
             self.processFile(path, match_regex);
         });
-    }
+    };
 
     self.writeToDisk = function(dest) {
         if (!self.alone && output.indexOf('this.escape(') !== -1) {
@@ -111,7 +111,7 @@ function Compiler() {
         fs.writeFileSync(dest, contents, 'UTF-8');
         start_output = '';
         output = '';
-    }
+    };
 
      self.process = function(files_to_process, output_file, match_regex) {
         files_to_process.forEach(function(path) {
@@ -123,7 +123,7 @@ function Compiler() {
         });
 
         self.writeToDisk(output_file);
-    }
+    };
 
     self.showUsage = function(message) {
         if (message) {
@@ -147,7 +147,7 @@ function Compiler() {
         console.log('--matches              specify regex pattern to match filename against');
         console.log('--forever-alone        compile templates on their own without helper functions');
         console.log('--ugly                 run the resulting code through uglify to minimize it');
-    }
+    };
 
     return self;
 }
