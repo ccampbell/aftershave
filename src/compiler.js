@@ -116,6 +116,10 @@ function Compiler() {
     };
 
      self.process = function(files_to_process, output_file, minimize, match_regex) {
+        if (!output_file && files_to_process.length === 1) {
+            output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
+        }
+
         if (minimize) {
             self.ugly = true;
         }
@@ -227,10 +231,6 @@ exports.start = function(args) {
     if (files_to_process.length === 0) {
         compiler.showUsage('no files to process!');
         return;
-    }
-
-    if (!output_file && files_to_process.length === 1) {
-        output_file = files_to_process[0].replace(/\.([a-zA-Z]+)$/, '') + '.js';
     }
 
     compiler.process(files_to_process, output_file, null, match_regex);
