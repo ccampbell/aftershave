@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "bin": {
+    "razor": "./bin/razor"
+  },
   "repository": {
     "type": "git",
     "url": "git@loop.ly:/home/git/razor"
