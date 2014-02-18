@@ -178,7 +178,7 @@ function Compiler() {
 /**
  * this is just fancy stuff to make the command line interface friendly
  */
-exports.process = new Compiler().process;
+exports.Compiler = Compiler;
 exports.start = function(args) {
     var compiler = new Compiler();
 

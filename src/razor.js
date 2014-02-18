@@ -232,7 +232,8 @@ var Razor = (function() {
             if (!compiler) {
                 compiler = require('./compiler.js');
             }
-            compiler.process.apply(compiler, arguments);
+            var instance = new compiler.Compiler();
+            instance.process.apply(instance, arguments);
         }
     };
 }) ();
