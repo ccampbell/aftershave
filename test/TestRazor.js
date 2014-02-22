@@ -145,6 +145,7 @@
 
         it('should allow other variable definitions', function() {
             _run('{% var name = "John"; %}{% if (passedName) { name = passedName; } %}<h1>{{ name }}</h1>', {}, '<h1>John</h1>');
+            _run('{% var name = "John"; %}{% if (passedName) { name = passedName; } %}<h1>{{ name }}</h1>', {passedName: 'Craig'}, '<h1>Craig</h1>');
         });
     });
 }) ();
