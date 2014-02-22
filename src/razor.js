@@ -195,7 +195,7 @@ var Razor = (function() {
 
                 if (firstWord === 'block') {
                     block = 1;
-                    activeVar = _trim(_stripQuotes(bit).replace('$', ''));
+                    activeVar = _trim(_stripQuotes(bit)) + 'Block';
                     continue;
                 }
 
@@ -256,7 +256,7 @@ var Razor = (function() {
             var extendData = [];
             for (var key in definedVars) {
                 if (key != defaultVar) {
-                    extendData.push(key + ': ' + key);
+                    extendData.push(key.replace(/Block$/, '') + ': ' + key);
                 }
             }
 
@@ -264,7 +264,7 @@ var Razor = (function() {
 
             // if no variables were set to extend then return this directly
             if (extendData.length === 0) {
-                return renderCall;
+                return _transform(renderCall);
             }
 
             code.push(defaultVar + ' += ' + renderCall);
