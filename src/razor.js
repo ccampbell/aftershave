@@ -1,5 +1,6 @@
 /* jshint node:true */
 var path = require('path');
+var esprima = require('esprima');
 var compiler;
 
 var Razor = (function() {
@@ -16,10 +17,6 @@ var Razor = (function() {
 
     function _stripQuotes(string) {
         return string.replace(/['"]/g, '');
-    }
-
-    function _escape(string) {
-        return string.replace(/\$\$([\w\-]+)/g, "this.escape($$$1)");
     }
 
     function _templateNameFromPath(view) {
@@ -39,14 +36,68 @@ var Razor = (function() {
         return bits.join('.');
     }
 
-    function _replaceArgs(string) {
-        return string.replace(/\$([\w\-]+)/g, function(match, arg) {
-            if (arg.indexOf('-') === -1) {
-                return 'args.' + arg;
+    function _transform(code) {
+        var data = esprima.parse(code, {range: true, tokens: true, tolerant: true});
+        var tokens = data.tokens;
+
+        var undefinedVars = [];
+        var definedVars = {};
+        var insideVarDeclaration = false;
+        var defining = false;
+        var token;
+        var prev;
+
+        for (var i = 0; i < tokens.length; i++) {
+            token = tokens[i];
+            prev = tokens[i - 1];
+
+            if (token.type === 'Keyword' && token.value === 'var') {
+                insideVarDeclaration = true;
+                defining = true;
+                continue;
             }
 
-            return 'args[\'' + arg + '\']';
-        });
+            if (insideVarDeclaration && token.type === 'Punctuator' && token.value === ',') {
+                defining = true;
+                continue;
+            }
+
+            if (insideVarDeclaration && token.type === 'Punctuator' && token.value === '=') {
+                defining = false;
+                continue;
+            }
+
+            if (token.type === 'Identifier' && prev.value !== '.' && prev.value !== '{') {
+                if (defining) {
+                    definedVars[token.value] = 1;
+                    continue;
+                }
+
+                // not defined
+                if (prev.value !== ',' && !definedVars.hasOwnProperty(token.value)) {
+                    undefinedVars.push(token);
+                }
+            }
+
+            if (token.type === 'Punctuator' && token.value === ';') {
+                insideVarDeclaration = false;
+                defining = false;
+            }
+        }
+
+        // replace the tokens backwards
+        undefinedVars.reverse();
+
+        function _replaceToken(token, code) {
+            var subString = code.substr(token.range[0])
+            return code.substr(0, token.range[0]) + subString.replace(token.value, 'args.' + token.value);
+        }
+
+        for (i = 0; i < undefinedVars.length; i++) {
+            code = _replaceToken(undefinedVars[i], code);
+        }
+
+        return code;
     }
 
     function _templateToJavascript(string) {
@@ -55,7 +106,6 @@ var Razor = (function() {
 
         // replace inline variables
         string = string.replace(new RegExp('{{\\s*(.*?);?\\s*}}', 'g'), function(group, code) {
-            code = _replaceArgs(_escape(code));
             code = "' + " + code + " + '";
             return code.replace(/\'/g, '_QUOTE_');
         });
@@ -163,7 +213,11 @@ var Razor = (function() {
                         functionName = 'this.render';
                     }
 
-                    code.push(_indent(indent) + activeVar + ' += ' + functionName + '(' + _replaceArgs(functionArgs.join(',')) + ')' +lineEnding + '\n');
+                    if (matches[1] === 'escape') {
+                        functionName = 'this.escape';
+                    }
+
+                    code.push(_indent(indent) + activeVar + ' += ' + functionName + '(' + functionArgs.join(',') + ')' +lineEnding + '\n');
                     continue;
                 }
 
@@ -171,7 +225,7 @@ var Razor = (function() {
                     block += 1;
                 }
 
-                code.push(_indent(indent) + firstWord + _replaceArgs(_escape(bit)) + lineEnding + '\n');
+                code.push(_indent(indent) + firstWord + bit + lineEnding + '\n');
 
                 if (!expression) {
                     indent += 1;
@@ -212,7 +266,7 @@ var Razor = (function() {
         }
 
         code.push('return ' + defaultVar + ';');
-        return code.join('');
+        return _transform(code.join(''));
     }
 
     return {
