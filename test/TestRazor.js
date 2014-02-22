@@ -29,6 +29,9 @@
 
             // try endif
             _run('<h1>Hello {% if (name) %}{{ name }}{% else %}Person{% endif %}!</h1>', {}, '<h1>Hello Person!</h1>');
+
+            // try punctuation
+            _run('<h1>Hello {% if (name): %}{{ name }}{% else: %}Person{% endif; %}!</h1>', {}, '<h1>Hello Person!</h1>');
         });
 
         it('should work with if/elseif/else statements', function() {
