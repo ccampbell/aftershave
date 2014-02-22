@@ -272,7 +272,7 @@ var Razor = (function() {
 
             // if no variables were set to extend then return this directly
             if (extendData.length === 0) {
-                return _transform(renderCall);
+                return 'return ' + _transform(renderCall);
             }
 
             code.push(defaultVar + ' += ' + renderCall);
