@@ -283,8 +283,8 @@ var Razor = (function() {
             return new Function('args', _templateToJavascript(string));
         },
 
-        render: function(string, args) {
-            return this.compile(string).call(this, args);
+        render: function(string, args, context) {
+            return this.compile(string).call(context || Razor, args);
         },
 
         templateNameFromPath: function(path) {
