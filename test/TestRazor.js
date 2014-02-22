@@ -128,7 +128,7 @@
                         return razor.render(master, args);
                     }
                 }
-            }
+            };
             _run(child, {}, '<h1>Hello!</h1><p>This is a sentence.</p>', context);
 
             // extend instead of extends
