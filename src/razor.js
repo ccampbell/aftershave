@@ -152,6 +152,7 @@ var Razor = (function() {
 
                 switch (firstWord) {
                     case 'case':
+                    case 'default':
                         lineEnding = ':';
                         break;
                     case 'if':
