@@ -118,5 +118,26 @@
             var args = {title: 'Whatever'};
             _run(template, args, '<title>WHATEVER</title>', context);
         });
+
+         it('should let you extend other templates', function() {
+            var master = '<h1>{{ title }}</h1><p>{{ content }}</p>';
+            var child = '{% extends master %}{% block title %}Hello!{% end %} {% block content %}This is a sentence.{% end %}';
+            var context = {
+                render: function(name, args) {
+                    if (name == 'master') {
+                        return razor.render(master, args);
+                    }
+                }
+            }
+            _run(child, {}, '<h1>Hello!</h1><p>This is a sentence.</p>', context);
+
+            // extend instead of extends
+            child = '{% extend master %}{% block title %}Hello!{% end %} {% block content %}This is a sentence.{% end %}';
+            _run(child, {}, '<h1>Hello!</h1><p>This is a sentence.</p>', context);
+
+            // dynamic title
+            child = '{% extend master %}{% block title %}{{ title }}{% end %} {% block content %}This is a sentence.{% end %}';
+            _run(child, {title: 'Dynamic!'}, '<h1>Dynamic!</h1><p>This is a sentence.</p>', context);
+         });
     });
 }) ();
