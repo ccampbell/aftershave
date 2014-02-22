@@ -15,7 +15,7 @@ function Compiler() {
 
     function _getStart(name) {
         var start = 'Razor.templates';
-        if (name.indexOf('-') === -1 && name.indexOf('.') === -1) {
+        if (name.indexOf('-') === -1 && name.indexOf('.') === -1 && name.indexOf(path.sep) === -1) {
             return start += '.' + name;
         }
         return start += "['" + name + "']";
@@ -72,7 +72,7 @@ function Compiler() {
         return str;
     }
 
-    self.processFile = function(src, matchRegex) {
+    self.processFile = function(src, matchRegex, isSubDirectory) {
         if (matchRegex && !new RegExp(matchRegex).test(src)) {
             console.warn('warning:', 'file ' + src + ' does not match pattern: "' + matchRegex + '", skipping...');
             return;
@@ -89,20 +89,29 @@ function Compiler() {
             fn = razor.generate(contents),
             name = razor.templateNameFromPath(src);
 
+        if (isSubDirectory) {
+            name = path.join(isSubDirectory, name);
+        }
+
         output += _wrap(fn, name, first);
     };
 
-    self.processDirectory = function(src, matchRegex) {
+    self.processDirectory = function(src, matchRegex, isSubDirectory) {
         fs.readdirSync(src).forEach(function(file) {
-            var path = src + '/' + file;
+            var filePath = path.join(src, file);
 
-            if (fs.statSync(path).isDirectory()) {
+            if (fs.statSync(filePath).isDirectory()) {
 
-                // ignore subdirectories
+                // don't go two levels deep
+                if (isSubDirectory) {
+                    return;
+                }
+
+                self.processDirectory(filePath, matchRegex, filePath.replace(src + path.sep, ''));
                 return;
             }
 
-            self.processFile(path, matchRegex);
+            self.processFile(filePath, matchRegex, isSubDirectory);
         });
     };
 

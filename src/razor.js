@@ -23,11 +23,17 @@ var Razor = (function() {
         return string.replace(/['"]/g, '');
     }
 
-    function _templateNameFromPath(view) {
+    function _templateNameFromPath(view, useBasename) {
+        if (useBasename === undefined) {
+            useBasename = true;
+        }
+
         view = _trim(view);
 
         // take just the end of the path
-        view = path.basename(view);
+        if (useBasename) {
+            view = path.basename(view);
+        }
 
         var bits = view.split('.');
 
@@ -214,7 +220,8 @@ var Razor = (function() {
 
                 // special case for extending views
                 if (firstWord === 'extend' || firstWord === 'extends') {
-                    extend = _templateNameFromPath(_stripQuotes(bit));
+                    var useBasename = false;
+                    extend = _templateNameFromPath(_stripQuotes(bit), useBasename);
                     continue;
                 }
 
