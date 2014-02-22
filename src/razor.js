@@ -115,7 +115,7 @@ var Razor = (function() {
         });
 
         var regex = new RegExp('{%\\s*(.*?):?\\s*%}', 'g'),
-            functionRegex = /([a-zA-Z0-9_]+)?\s*\((.*)\)/,
+            functionRegex = /^\s*?([a-zA-Z0-9_]+)?\s*\((.*)\)/,
             bits = string.split(regex),
             length = bits.length,
             matches,
