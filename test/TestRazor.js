@@ -48,5 +48,20 @@
             var result = '<ul><li>Banana</li><li>Blueberry</li><li>Pumpkin</li><li>Strawberry</li></ul>';
             _run(template, args, result);
         });
+
+        it('should work with switch statements', function() {
+            var template = '{% switch (fruit) %}{% case "Blueberry" %}Muffin{% break %}{% case "Banana" %}Split{% break %}{% default %}Nothing{% break %}{% end %}';
+            var args = {};
+            var result = 'Nothing';
+            _run(template, args, result);
+
+            var args = {fruit: 'Blueberry'};
+            var result = 'Muffin';
+            _run(template, args, result);
+
+            var args = {fruit: 'Banana'};
+            var result = 'Split';
+            _run(template, args, result);
+        });
     });
 }) ();
