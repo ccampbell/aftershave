@@ -189,6 +189,12 @@ var Razor = (function() {
 
                 expression = lineEnding === ';';
 
+                // if there is an expression that ends on the same line
+                if (lineEnding === ' {' && bit.charAt(bit.length - 1) === '}') {
+                    expression = true;
+                    lineEnding = '';
+                }
+
                 if (expression && bit.charAt(bit.length - 1) === ';') {
                     lineEnding = '';
                 }
@@ -211,19 +217,21 @@ var Razor = (function() {
                     var functionName = matches[1];
                     var functionArgs = matches[2].split(',');
 
-                    // special for render
-                    functionName = 'this.helpers.' + functionName;
-                    if (matches[1] === 'render') {
-                        functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, '')) + '\'';
-                        functionName = 'this.render';
-                    }
+                    if (functionName != 'if' && functionName != 'for' && functionName != 'switch') {
+                        // special for render
+                        functionName = 'this.helpers.' + functionName;
+                        if (matches[1] === 'render') {
+                            functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, '')) + '\'';
+                            functionName = 'this.render';
+                        }
 
-                    if (matches[1] === 'escape') {
-                        functionName = 'this.escape';
-                    }
+                        if (matches[1] === 'escape') {
+                            functionName = 'this.escape';
+                        }
 
-                    code.push(_indent(indent) + activeVar + ' += ' + functionName + '(' + functionArgs.join(',') + ')' +lineEnding + '\n');
-                    continue;
+                        code.push(_indent(indent) + activeVar + ' += ' + functionName + '(' + functionArgs.join(',') + ')' +lineEnding + '\n');
+                        continue;
+                    }
                 }
 
                 if (block) {
