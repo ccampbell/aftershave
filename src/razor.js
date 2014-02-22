@@ -214,7 +214,7 @@ var Razor = (function() {
                     // special for render
                     functionName = 'this.helpers.' + functionName;
                     if (matches[1] === 'render') {
-                        functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/, '')) + '\'';
+                        functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, '')) + '\'';
                         functionName = 'this.render';
                     }
 

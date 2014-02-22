@@ -74,13 +74,24 @@
 
         it('should let you render other views', function() {
             var context = {
-                render : function(string) {
-                    return "<footer>More content</footer>";
+                render : function(view) {
+                    return "<footer>View is " + view + "</footer>";
                 }
             };
             var template = '<h1>Hello</h1>{% render("footer") %}';
             var args = {};
-            _run(template, args, '<h1>Hello</h1><footer>More content</footer>', context);
+            _run(template, args, '<h1>Hello</h1><footer>View is footer</footer>', context);
+        });
+
+        it('should strip extension when rendering other views', function() {
+            var context = {
+                render : function(view) {
+                    return "<footer>View is " + view + "</footer>";
+                }
+            };
+            var template = '<h1>Hello</h1>{% render("footer.html") %}';
+            var args = {};
+            _run(template, args, '<h1>Hello</h1><footer>View is footer</footer>', context);
         });
 
         it('should let you escape variables', function() {
