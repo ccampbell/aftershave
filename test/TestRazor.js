@@ -55,12 +55,12 @@
             var result = 'Nothing';
             _run(template, args, result);
 
-            var args = {fruit: 'Blueberry'};
-            var result = 'Muffin';
+            args = {fruit: 'Blueberry'};
+            result = 'Muffin';
             _run(template, args, result);
 
-            var args = {fruit: 'Banana'};
-            var result = 'Split';
+            args = {fruit: 'Banana'};
+            result = 'Split';
             _run(template, args, result);
         });
     });
