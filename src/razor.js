@@ -12,7 +12,11 @@ var Razor = (function() {
     }
 
     function _trim(string) {
-        return string.replace(/^\s+/, '').replace(/\s+$/, '');
+        return _ltrim(string).replace(/\s+$/, '');
+    }
+
+    function _ltrim(string) {
+        return string.replace(/^\s+/, '');
     }
 
     function _stripQuotes(string) {
@@ -131,7 +135,7 @@ var Razor = (function() {
             i;
 
         for (i = 0; i < length; i++) {
-            line = _trim(bits[i]);
+            line = _ltrim(bits[i]);
 
             if (!line) {
                 continue;
