@@ -142,5 +142,9 @@
             child = '{% extend master %}{% block title %}{{ title }}{% end %} {% block content %}This is a sentence.{% end %}';
             _run(child, {title: 'Dynamic!'}, '<h1>Dynamic!</h1><p>This is a sentence.</p>', context);
          });
+
+        it('should allow other variable definitions', function() {
+            _run('{% var name = "John"; %}{% if (passedName) { name = passedName; } %}<h1>{{ name }}</h1>', {}, '<h1>John</h1>');
+        });
     });
 }) ();
