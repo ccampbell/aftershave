@@ -1,8 +1,9 @@
 /* jshint node: true */
 /* global console */
 var uglify = require('uglify-js');
-var VERSION = '0.4.0',
-    fs = require('fs'),
+var fs = require('fs'),
+    path = require('path'),
+    VERSION = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'))).version,
     razor = require('./razor.js');
 
 function Compiler() {
