@@ -143,6 +143,22 @@
             _run(child, {title: 'Dynamic!'}, '<h1>Dynamic!</h1><p>This is a sentence.</p>', context);
          });
 
+        it('should let you extend with default blocks', function() {
+            var master = '<title>{% block title %}Default Title{% end %}</title>';
+            var child = '{% extends master %}';
+            var context = {
+                render: function(name, args) {
+                    if (name == 'master') {
+                        return razor.render(master, args);
+                    }
+                }
+            };
+            _run(child, {}, '<title>Default Title</title>', context);
+
+            child = '{% extends master %}{% block title %}New Title{% end %}';
+            _run(child, {}, '<title>New Title</title>', context);
+        });
+
         it('should allow other variable definitions', function() {
             _run('{% var name = "John"; %}{% if (passedName) { name = passedName; } %}<h1>{{ name }}</h1>', {}, '<h1>John</h1>');
             _run('{% var name = "John"; %}{% if (passedName) { name = passedName; } %}<h1>{{ name }}</h1>', {passedName: 'Craig'}, '<h1>Craig</h1>');

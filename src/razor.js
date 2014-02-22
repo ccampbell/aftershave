@@ -178,6 +178,13 @@ var Razor = (function() {
 
                 if (firstWord.indexOf('end') === 0) {
                     if (block && --block === 0) {
+
+                        // if this is not an extended block
+                        // then allow the default block value to come through
+                        if (!extend) {
+                            code.push(_indent(indent) + defaultVar + ' += ' + activeVar.replace(/Block$/, '') + ' || ' + activeVar + ';\n');
+                        }
+
                         activeVar = defaultVar;
                         continue;
                     }
