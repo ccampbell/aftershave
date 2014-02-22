@@ -57,7 +57,7 @@
             var template = '{% fruits.sort() %}<ul>{% for (var i = 0; i < fruits.length; i++) %}<li>{{ fruits[i] }}</li>{% end %}</ul>';
             var args = {fruits: ['Blueberry', 'Banana', 'Strawberry', 'Pumpkin']};
             var result = '<ul><li>Banana</li><li>Blueberry</li><li>Pumpkin</li><li>Strawberry</li></ul>';
-            _run(template, args, result, context);
+            _run(template, args, result);
         });
 
         it('should work with switch statements', function() {
