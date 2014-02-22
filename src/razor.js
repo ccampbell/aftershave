@@ -114,7 +114,7 @@ var Razor = (function() {
             return code.replace(/\'/g, '_QUOTE_');
         });
 
-        var regex = new RegExp('{%\\s*(.*?):?\\s*%}', 'g'),
+        var regex = new RegExp('{%\\s*(.*?)[:;]?\\s*%}', 'g'),
             functionRegex = /^\s*?([a-zA-Z0-9_]+)?\s*\((.*)\)/,
             bits = string.split(regex),
             length = bits.length,
