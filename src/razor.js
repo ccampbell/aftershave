@@ -275,7 +275,11 @@ var Razor = (function() {
         },
 
         compile: function(string) {
-            return new Function(string);
+            return new Function('args', _templateToJavascript(string));
+        },
+
+        render: function(string, args) {
+            return this.compile(string).call(this, args);
         },
 
         templateNameFromPath: function(path) {
