@@ -10,7 +10,8 @@ module.exports = function(grunt) {
             src: [
                 'Gruntfile.js',
                 'src/compiler.js',
-                'src/razor.js'
+                'src/razor.js',
+                'test/TestRazor.js'
             ]
         },
 
