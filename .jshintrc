@@ -1,0 +1,15 @@
+{
+    "evil": true,
+    "regexdash": true,
+    "latedef": true,
+    "undef": true,
+    "unused": true,
+    "node": true,
+    "wsh": true,
+    "trailing": true,
+    "sub": true,
+    "devel": true,
+    "newcap": false,
+    "globals": {
+    }
+}
