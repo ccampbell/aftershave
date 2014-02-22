@@ -89,7 +89,7 @@ var Razor = (function() {
         undefinedVars.reverse();
 
         function _replaceToken(token, code) {
-            var subString = code.substr(token.range[0])
+            var subString = code.substr(token.range[0]);
             return code.substr(0, token.range[0]) + subString.replace(token.value, 'args.' + token.value);
         }
 
