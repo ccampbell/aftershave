@@ -21,6 +21,10 @@
   "gitHead": "9344620277005c412c7481aba6bdd90db27cf179",
   "dependencies": {
     "uglify-js": "~2.4.12",
-    "esprima": "~1.0.4"
+    "esprima": "~1.0.4",
+    "grunt": "~0.4.2",
+    "grunt-contrib-jshint": "~0.8.0",
+    "grunt-simple-mocha": "~0.4.0",
+    "chai": "~1.9.0"
   }
 }
