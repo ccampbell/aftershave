@@ -5,8 +5,8 @@
     var expect = require('chai').expect;
     var razor = require('../src/razor.js');
 
-    function _run(template, args, expected) {
-        var actual = razor.render(template, args);
+    function _run(template, args, expected, context) {
+        var actual = razor.render(template, args, context);
         expect(actual).to.equal(expected);
     }
 
@@ -26,6 +26,9 @@
         it('should work with if statements', function() {
             _run('<h1>Hello {% if (name) %}{{ name }}{% else %}Person{% end %}!</h1>', {}, '<h1>Hello Person!</h1>');
             _run('<h1>Hello {% if (name) %}{{ name }}{% else %}Person{% end %}!</h1>', {name: 'Craig'}, '<h1>Hello Craig!</h1>');
+
+            // try endif
+            _run('<h1>Hello {% if (name) %}{{ name }}{% else %}Person{% endif %}!</h1>', {}, '<h1>Hello Person!</h1>');
         });
 
         it('should work with if/elseif/else statements', function() {
@@ -39,14 +42,19 @@
             var args = {fruits: ['Blueberry', 'Banana', 'Strawberry', 'Pumpkin']};
             var result = '<ul><li>Blueberry</li><li>Banana</li><li>Strawberry</li><li>Pumpkin</li></ul>';
             _run(template, args, result);
+
+            // try endfor
+            template = '<ul>{% for (var i = 0; i < fruits.length; i++) %}<li>{{ fruits[i] }}</li>{% endfor %}</ul>';
+            _run(template, args, result);
         });
 
         it('should allow you to run any javascript', function() {
+
             // alphabetize the fruits in the view!
             var template = '{% fruits.sort() %}<ul>{% for (var i = 0; i < fruits.length; i++) %}<li>{{ fruits[i] }}</li>{% end %}</ul>';
             var args = {fruits: ['Blueberry', 'Banana', 'Strawberry', 'Pumpkin']};
             var result = '<ul><li>Banana</li><li>Blueberry</li><li>Pumpkin</li><li>Strawberry</li></ul>';
-            _run(template, args, result);
+            _run(template, args, result, context);
         });
 
         it('should work with switch statements', function() {
@@ -62,6 +70,42 @@
             args = {fruit: 'Banana'};
             result = 'Split';
             _run(template, args, result);
+        });
+
+        it('should let you render other views', function() {
+            var context = {
+                render : function(string) {
+                    return "<footer>More content</footer>";
+                }
+            };
+            var template = '<h1>Hello</h1>{% render("footer") %}';
+            var args = {};
+            _run(template, args, '<h1>Hello</h1><footer>More content</footer>', context);
+        });
+
+        it('should let you escape variables', function() {
+            var context = {
+                escape: function(string) {
+                    return 'Escaped: ' + string;
+                }
+            };
+            var template = '<title>{% escape(title) %}</title>';
+            var args = {title: 'Whatever'};
+            _run(template, args, '<title>Escaped: Whatever</title>', context);
+        });
+
+         it('should let you use helper functions', function() {
+            var context = {
+                helpers: {
+                    capitalize: function(string) {
+                        return string.toUpperCase();
+                    }
+                }
+            };
+
+            var template = '<title>{% capitalize(title) %}</title>';
+            var args = {title: 'Whatever'};
+            _run(template, args, '<title>WHATEVER</title>', context);
         });
     });
 }) ();
