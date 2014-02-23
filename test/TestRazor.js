@@ -122,6 +122,17 @@
             _run(template, args, '<title>WHATEVER</title>', context);
         });
 
+         it('should not render "undefined" if helper returns undefined', function() {
+            var context = {
+                helpers: {
+                    addJavascript: function() {}
+                }
+            };
+
+            var template = '{% addJavascript("file.js") %}';
+            _run(template, {}, '', context);
+         });
+
          it('should let you extend other templates', function() {
             var master = '<h1>{{ title }}</h1><p>{{ content }}</p>';
             var child = '{% extends master %}{% block title %}Hello!{% end %} {% block content %}This is a sentence.{% end %}';

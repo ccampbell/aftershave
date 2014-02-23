@@ -246,7 +246,7 @@ var Razor = (function() {
                             functionName = 'this.escape';
                         }
 
-                        code.push(_indent(indent) + activeVar + ' += ' + functionName + '(' + functionArgs.join(',') + ')' +lineEnding + '\n');
+                        code.push(_indent(indent) + activeVar + ' += (' + functionName + '(' + functionArgs.join(',') + ') || \'\')' +lineEnding + '\n');
                         continue;
                     }
                 }
