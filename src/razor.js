@@ -144,7 +144,12 @@ var Razor = (function() {
             i;
 
         for (i = 0; i < length; i++) {
-            line = _ltrim(bits[i]);
+            line = bits[i];
+
+            // if it is all spaces then remove them
+            if (line.replace(/ /g, '') === '') {
+                line = '';
+            }
 
             if (!line) {
                 continue;

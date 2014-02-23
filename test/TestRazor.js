@@ -178,5 +178,9 @@
         it('should strip html comments', function() {
             _run('<!-- some comment -->\n<div class="hello">Hello</div>', {}, '<div class="hello">Hello</div>');
         });
+
+        it('should preserve whitespace on a single line', function() {
+            _run('<form method="post" action="/" class="sign-in{% if (error) %} error{% end %}">', {error: true}, '<form method="post" action="/" class="sign-in error">');
+        });
     });
 }) ();
