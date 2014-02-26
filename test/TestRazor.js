@@ -3,14 +3,14 @@
     'use strict';
 
     var expect = require('chai').expect;
-    var razor = require('../src/razor.js');
+    var aftershave = require('../src/aftershave.js');
 
     function _run(template, args, expected, context) {
-        var actual = razor.render(template, args, context);
+        var actual = aftershave.render(template, args, context);
         expect(actual).to.equal(expected);
     }
 
-    describe('Testing Razor.render', function() {
+    describe('Testing Aftershave.render', function() {
         it('should work alone', function() {
             _run('<h1>Hello</h1>', {}, '<h1>Hello</h1>');
         });
@@ -139,7 +139,7 @@
             var context = {
                 render: function(name, args) {
                     if (name == 'master') {
-                        return razor.render(master, args);
+                        return aftershave.render(master, args);
                     }
                 }
             };
@@ -160,7 +160,7 @@
             var context = {
                 render: function(name, args) {
                     if (name == 'master') {
-                        return razor.render(master, args);
+                        return aftershave.render(master, args);
                     }
                 }
             };

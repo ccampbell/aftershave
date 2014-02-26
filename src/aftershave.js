@@ -3,7 +3,7 @@ var path = require('path');
 var esprima = require('esprima');
 var compiler;
 
-var Razor = (function() {
+var Aftershave = (function() {
     'use strict';
 
     function _indent(count) {
@@ -314,7 +314,7 @@ var Razor = (function() {
         },
 
         render: function(string, args, context) {
-            return this.compile(string).call(context || Razor, args);
+            return this.compile(string).call(context || Aftershave, args);
         },
 
         templateNameFromPath: function(path) {
@@ -331,4 +331,4 @@ var Razor = (function() {
     };
 }) ();
 
-module.exports = Razor;
+module.exports = Aftershave;
