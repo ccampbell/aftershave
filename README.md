@@ -89,10 +89,11 @@ Anything else should be placed inside `{%` and `%}` tags.  You can use any javas
 
 ```html
 <p>
-{% if (word.length > 25) %}
-    Wow that is a long word
-{% else %}
-    That is a normal sized word{% end %}
+    {% if (word.length > 25) %}
+        Wow that is a long word
+    {% else %}
+        That is a normal sized word
+    {% end %}
 </p>
 ```
 
