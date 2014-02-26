@@ -63,7 +63,7 @@ aftershave /path/to/file1.html /path/to/directory --output /path/to/templates.js
 
 This will compile all the templates in the specified locations to `/path/to/templates.js`.  That module will expose an aftershave module to node.js or the browser to use to render your templates.
 
-You can use it from node.js also
+You can do the same thing from node.js also
 
 ```javascript
 var aftershave = require('aftershave');
