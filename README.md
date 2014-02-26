@@ -174,7 +174,7 @@ Aftershave let's you extend any other templates.  This let's you do things like 
 Next you need to define the javascript helpers somewhere in your code:
 
 ```javascript
-Aftershave.helpers = function() {
+function ViewHelpers() {
     var self = this;
     self.jsFiles = [];
 
@@ -192,6 +192,9 @@ Aftershave.helpers = function() {
         }
     }
 };
+
+// call this with each request
+aftershave.helpers = new ViewHelpers();
 ```
 
 Now if you run `Aftershave.render('home')` the final rendered template will look like this:
