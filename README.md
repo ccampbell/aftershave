@@ -55,4 +55,24 @@ Aftershave.render('fruits', {
 
 This is extremely fast since all it is doing is string concatenation.
 
-More documentation will be here soon.
+Check out the tests to see some examples.
+
+## Usage
+
+```
+aftershave /path/to/file1.html /path/to/directory --output /path/to/templates.js
+```
+
+This will compile all the templates in the specified locations to `/path/to/templates.js`.  That module will expose an aftershave module to node.js or the browser to use to render your templates.
+
+You can use it from node.js also
+
+```javascript
+var aftershave = require('aftershave');
+
+// only call this once to compile templates
+aftershave.process(['/path/to/file1.html', '/path/to/directory'], '/path/to/templates.js');
+
+var templates = require('/path/to/templates.js');
+var output = templates.render('some-name', {cool: true});
+```
