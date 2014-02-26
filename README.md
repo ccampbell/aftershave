@@ -20,7 +20,7 @@ aftershave --help
 
 Aftershave is a slightly different approach to javascript templating.  Rather than parse and compile on the fly as your code executes, it precompiles templates into a vanilla javascript module you can include.
 
-Most templating systems have limits to what kind of expressions you can do.  Aftershave lets you execute any javascript code.
+This makes it way faster than other template engines since all it is doing is string concatenation.  It also provides a simple, clean syntax and allows any regular javascript code.  Most other templating systems require you to learn a special syntax.
 
 For example, this template:
 
@@ -53,8 +53,6 @@ Aftershave.render('fruits', {
 });
 ```
 
-This is extremely fast since all it is doing is string concatenation.
-
 ## Usage
 
 ```
@@ -68,7 +66,9 @@ You can do the same thing from node.js also
 ```javascript
 var aftershave = require('aftershave');
 
-// only call this once to compile templates
+// WARNING: this should not be called multiple times
+// only call this once to generate the compiled templates then use `require` and
+// render them that way
 aftershave.process(['/path/to/file1.html', '/path/to/directory'], '/path/to/templates.js');
 
 var templates = require('/path/to/templates.js');
