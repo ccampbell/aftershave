@@ -1,24 +1,20 @@
 {
   "name": "aftershave",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "compiled javascript templates",
-  "main": "src/aftershave",
+  "main": "./src/aftershave",
   "scripts": {
     "test": "grunt simplemocha"
   },
   "bin": {
     "aftershave": "./bin/aftershave"
   },
-  "repository": {
-    "type": "git",
-    "url": "git@loop.ly:/home/git/razor"
-  },
+  "repository": "git://github.com/ccampbell/aftershave",
   "keywords": [
     "templating"
   ],
   "author": "Craig Campbell",
   "license": "MIT",
-  "gitHead": "9344620277005c412c7481aba6bdd90db27cf179",
   "dependencies": {
     "uglify-js": "~2.4.12",
     "esprima": "~1.0.4",
