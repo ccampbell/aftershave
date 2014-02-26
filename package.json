@@ -1,13 +1,13 @@
 {
-  "name": "razor",
+  "name": "aftershave",
   "version": "0.5.1",
   "description": "compiled javascript templates",
-  "main": "src/razor",
+  "main": "src/aftershave",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "grunt simplemocha"
   },
   "bin": {
-    "razor": "./bin/razor"
+    "aftershave": "./bin/aftershave"
   },
   "repository": {
     "type": "git",
