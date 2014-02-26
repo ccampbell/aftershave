@@ -48,7 +48,7 @@ Aftershave.templates.fruits = function(args) {
 Then to execute this, you would include the generated template file and call
 
 ```javascript
-Aftershave.render('test', {
+Aftershave.render('fruits', {
     fruits: ['apple', 'blueberry', 'orange']
 });
 ```
