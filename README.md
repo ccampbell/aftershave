@@ -209,4 +209,4 @@ Now if you run `Aftershave.render('home')` the final rendered template will look
 
 Any variables are replaced in the parent template.  The `{% block %}` tags let you specify a default value for a certain section.  If the subtemplate did not pass in a title then the title would fall back to the default title `Default Title`.
 
-If you do not wrap a section in a `{% block %}` tag in the parent template and then do not pass that variable in in the child template it will render as `'undefined'`.
+If you do not wrap a section in a `{% block %}` tag in the parent template and then do not pass that variable into the child template it will render as `'undefined'`.
