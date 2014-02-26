@@ -76,3 +76,138 @@ aftershave.process(['/path/to/file1.html', '/path/to/directory'], '/path/to/temp
 var templates = require('/path/to/templates.js');
 var output = templates.render('some-name', {cool: true});
 ```
+
+## Documentation
+
+Aftershave templates are pretty heavily inspired by [tornado templates](http://www.tornadoweb.org/en/stable/template.html).  The syntax is very similar.
+
+#### Variables
+
+Wrapping a variable in `{{ foo }}` will render it inline directly in the template.
+
+#### Code blocks
+
+Anything else should be placed inside `{%` and `%}` tags.  You can use any javascript code.  Any code that surrounds a block should be followed by a `{% end %}` tag.  For example:
+
+```html
+<p>
+{% if (word.length > 25) %}
+    Wow that is a long word
+{% else %}
+    That is a normal sized word{% end %}
+</p>
+```
+
+#### Helpers
+
+There are a few built in helper functions
+
+##### Escape
+
+By default aftershave does not escape variables.
+
+To escape a variable just wrap it in a function call:
+
+```html
+<p>The email you entered is: {% escape(email) %}</p>
+```
+
+##### Render
+
+If you call the render function it will render a sub template at this point.  This is convenient if you have modules that you want to include on multiple pages and don't want to duplicate the code.
+
+```html
+{% render('partial/user_grid.html', {users: users}) %}
+```
+
+When templates are compiled the file extension is stripped out of the template name so it is optional to include it here.  Aftershave should process a single level of sub-directories to allow you to better organize your templates.
+
+##### Other helpers
+
+Any other function call you include will be mapped to a helpers object in the generated code.  You can then pass it in.  For example if you wanted to add a helper function to translate text into another language you could do something like this:
+
+In **template.html**
+
+```html
+<h1>{% translate('Hello!') %}</h1>
+```
+
+In **something.js** after including the generated template code
+
+```javascript
+Aftershave.helpers.translate = function(text) {
+    // determine language
+    var language = getUserLanguage();
+    if (text == 'Hello!' && language == 'spanish') {
+        return '¡Hola!';
+    }
+};
+```
+
+#### Extending other templates
+
+Aftershave let's you extend any other templates.  This let's you do things like have default sections in one place that are overridden by subtemplates.  For example you might want to use different layouts for a complex site.
+
+**master.phtml**
+
+```html
+<!DOCTYPE html>
+<head>
+    <title>{% block title %}Default Title{% end %}</title>
+</head>
+<body>
+    {{ content }}
+    {% renderJavascript() %}
+</body>
+```
+
+**home.phtml**
+
+```html
+{% extends master.phtml %}
+{% addJavascript('/static/js/home.js') %}
+{% block title %}This is the homepage{% end %}
+{% block content %}
+    <p>The content goes here.</p>
+{% end %}
+```
+
+Next you need to define the javascript helpers somewhere in your code:
+
+```javascript
+Aftershave.helpers = function() {
+    var self = this;
+    self.jsFiles = [];
+
+    return {
+        addJavascript: function(path) {
+            self.jsFiles.push(path);
+        },
+
+        renderJavascript: function() {
+            var finalJs = '';
+            for (var i = 0; i < self.jsFiles.length; i++) {
+                finalJs += '<script src="' + self.jsFiles[i] + '"></script>';
+            }
+            return finalJs;
+        }
+    }
+};
+```
+
+Now if you run `Aftershave.render('home')` the final rendered template will look like this:
+
+```html
+<!DOCTYPE html>
+<head>
+    <title>This is the homepage</title>
+</head>
+<body>
+    <p>The content goes here.</p>
+    <script src="/static/js/home.js"></script>
+</body>
+```
+
+Any variables are replaced in the parent template.  The `{% block %}` tags let you specify a default value for a certain section.  If the subtemplate did not pass in a title then the title would fall back to the default title `Default Title`.
+
+If you do not wrap a section in a `{% block %}` tag in the parent template and then do not pass that variable in in the child template it will render as `'undefined'`.
