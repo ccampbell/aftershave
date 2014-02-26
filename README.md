@@ -55,8 +55,6 @@ Aftershave.render('fruits', {
 
 This is extremely fast since all it is doing is string concatenation.
 
-Check out the tests to see some examples.
-
 ## Usage
 
 ```
