@@ -11,7 +11,7 @@ module.exports = function(grunt) {
                 'Gruntfile.js',
                 'src/compiler.js',
                 'src/razor.js',
-                'test/TestRazor.js'
+                'test/TestAftershave.js'
             ]
         },
 
