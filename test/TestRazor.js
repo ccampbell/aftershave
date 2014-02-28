@@ -168,6 +168,10 @@
 
             child = '{% extends master %}{% block title %}New Title{% end %}';
             _run(child, {}, '<title>New Title</title>', context);
+
+            // if else statement
+            child = '{% extend master %}{% block title %}{% if (one) %}One.{% else %}Two.{% end %}{% end %}';
+            _run(child, {one: true}, '<title>One.</title>', context);
         });
 
         it('should allow other variable definitions', function() {

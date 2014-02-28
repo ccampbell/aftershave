@@ -256,7 +256,11 @@ var Aftershave = (function() {
                     }
                 }
 
-                if (block) {
+                // only increase block level with if for and switch statements
+                // when an else statement happens it shouldn't increase again
+                // because there is still only one {% end %} statement that is
+                // expected
+                if (block && ['if', 'for', 'switch'].indexOf(firstWord) === 0) {
                     block += 1;
                 }
 
