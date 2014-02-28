@@ -2,6 +2,32 @@
 var path = require('path');
 var esprima = require('esprima');
 var compiler;
+var NATIVE_FUNCTIONS = {
+    'decodeURI': 1,
+    'decodeURIComponent': 1,
+    'encodeURI': 1,
+    'encodeURIComponent': 1,
+    'isFinite': 1,
+    'isNaN': 1,
+    'parseInt': 1,
+    'parseFloat': 1
+};
+
+var NATIVE_OBJECTS = {
+    'Array': 1,
+    'Boolean': 1,
+    'Date': 1,
+    'Error': 1,
+    'Function': 1,
+    'JSON': 1,
+    'Math': 1,
+    'Map': 1,
+    'Number': 1,
+    'Object': 1,
+    'RegExp': 1,
+    'String': 1,
+    'WeakMap': 1
+};
 
 var Aftershave = (function() {
     'use strict';
@@ -80,6 +106,15 @@ var Aftershave = (function() {
             if (token.type === 'Identifier' && prev.value !== '.' && prev.value !== '{') {
                 if (defining) {
                     definedVars[token.value] = 1;
+                    continue;
+                }
+
+                // if this is a native javascript object then ignore
+                if (NATIVE_OBJECTS.hasOwnProperty(token.value)) {
+                    continue;
+                }
+
+                if (NATIVE_FUNCTIONS.hasOwnProperty(token.value)) {
                     continue;
                 }
 
@@ -240,15 +275,19 @@ var Aftershave = (function() {
                     var functionArgs = matches[2].split(',');
 
                     if (functionName != 'if' && functionName != 'for' && functionName != 'switch') {
-                        // special for render
-                        functionName = 'this.helpers.' + functionName;
-                        if (matches[1] === 'render') {
-                            functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, '')) + '\'';
-                            functionName = 'this.render';
-                        }
 
-                        if (matches[1] === 'escape') {
-                            functionName = 'this.escape';
+                        if (!NATIVE_FUNCTIONS.hasOwnProperty(functionName)) {
+                            functionName = 'this.helpers.' + functionName;
+
+                            // special for render and escape
+                            if (matches[1] === 'render') {
+                                functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, '')) + '\'';
+                                functionName = 'this.render';
+                            }
+
+                            if (matches[1] === 'escape') {
+                                functionName = 'this.escape';
+                            }
                         }
 
                         code.push(_indent(indent) + activeVar + ' += (' + functionName + '(' + functionArgs.join(',') + ') || \'\')' +lineEnding + '\n');

@@ -186,5 +186,14 @@
         it('should preserve whitespace on a single line', function() {
             _run('<form method="post" action="/" class="sign-in{% if (error) %} error{% end %}">', {error: true}, '<form method="post" action="/" class="sign-in error">');
         });
+
+        it('should allow native javascript functions', function() {
+            _run('Url is http://something.com/?email={{ encodeURIComponent(email) }}', {email: 'whatever@something.com'}, 'Url is http://something.com/?email=whatever%40something.com');
+            _run('Url is http://something.com/?email={% encodeURIComponent(email) %}', {email: 'whatever@something.com'}, 'Url is http://something.com/?email=whatever%40something.com');
+        });
+
+        it('should allow native javascript objects', function() {
+            _run('Look at the json: {{ JSON.stringify(something) }}', {something: {test: 123}}, 'Look at the json: {"test":123}');
+        });
     });
 }) ();
