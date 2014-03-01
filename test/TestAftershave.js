@@ -195,5 +195,18 @@
         it('should allow native javascript objects', function() {
             _run('Look at the json: {{ JSON.stringify(something) }}', {something: {test: 123}}, 'Look at the json: {"test":123}');
         });
+
+        it('should pass args to parent template', function() {
+            var master = '<h1>{% if (currentUser) %}Logged In as {{ currentUser.name }}{% else %}Logged Out{% end %}</h1><p>{{ content }}</p>';
+            var child = '{% extends master %}{% block content %}Content goes here.{% end %}';
+            var context = {
+                render: function(name, args) {
+                    if (name == 'master') {
+                        return aftershave.render(master, args);
+                    }
+                }
+            };
+            _run(child, {currentUser: {name: 'Craig'}}, '<h1>Logged In as Craig</h1><p>Content goes here.</p>', context);
+        });
     });
 }) ();

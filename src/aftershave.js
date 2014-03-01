@@ -77,7 +77,7 @@ var Aftershave = (function() {
         var tokens = data.tokens;
 
         var undefinedVars = [];
-        var definedVars = {};
+        var definedVars = {'args': 1};
         var insideVarDeclaration = false;
         var defining = false;
         var token;
@@ -326,21 +326,13 @@ var Aftershave = (function() {
         }
 
         if (extend) {
-            var extendData = [];
             for (var key in definedVars) {
                 if (key != defaultVar) {
-                    extendData.push(key.replace(/Block$/, '') + ': ' + key);
+                    code.push(_indent(indent) + 'args.' + key.replace(/Block$/, '') + ' = ' + key + ';\n');
                 }
             }
 
-            var renderCall = 'this.render(\'' + extend + '\', {' + extendData.join(', ') + '});\n';
-
-            // if no variables were set to extend then return this directly
-            if (extendData.length === 0) {
-                return 'return ' + _transform(renderCall);
-            }
-
-            code.push(defaultVar + ' += ' + renderCall);
+            code.push(defaultVar + ' += this.render(\'' + extend + '\', args);\n');
         }
 
         code.push('return ' + defaultVar + ';');
