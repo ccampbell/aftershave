@@ -26,7 +26,8 @@ var NATIVE_OBJECTS = {
     'Object': 1,
     'RegExp': 1,
     'String': 1,
-    'WeakMap': 1
+    'WeakMap': 1,
+    'console': 1
 };
 
 var Aftershave = (function() {

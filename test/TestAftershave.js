@@ -208,5 +208,9 @@
             };
             _run(child, {currentUser: {name: 'Craig'}}, '<h1>Logged In as Craig</h1><p>Content goes here.</p>', context);
         });
+
+        it('should allow console logs', function() {
+            _run('{% console.log(something) %}', {something: true}, '');
+        });
     });
 }) ();
