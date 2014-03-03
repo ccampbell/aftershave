@@ -212,5 +212,18 @@
         it('should allow console logs', function() {
             _run('{% console.log(something) %}', {something: true}, '');
         });
+
+        it('should not have undefined variables with child templates', function() {
+            var master = '{% block content %}{% end %}';
+            var child = '{% extends master %}{% block content %}{% if (results) %}<h1>Search Results</h1>{% else %}<h1>No Results</h1>{% end %}{% end %}';
+            var context = {
+                render: function(name, args) {
+                    if (name == 'master') {
+                        return aftershave.render(master, args)
+                    }
+                }
+            };
+            _run(child, {results: false}, '<h1>No Results</h1>', context);
+        });
     });
 }) ();
