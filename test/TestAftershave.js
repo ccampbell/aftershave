@@ -237,5 +237,22 @@
             };
             _run(template, {message: 'Hello!'}, 'Hello!', context);
         });
+
+        it('should use helpers inside of an if statement', function() {
+            var template = '{% if (showTip("something")) %}<div class="tip">This is a tip</div>{% end %}';
+            var context = {
+                helpers: {
+                    showTip: function () {
+                        return true;
+                    }
+                }
+            };
+            _run(template, {}, '<div class="tip">This is a tip</div>', context);
+        });
+
+        it('should use args if args is specified explicitly', function() {
+            var template = '{% if (args.showTip("something")) %}<div class="tip">This is a tip</div>{% end %}';
+            _run(template, {showTip: function() {return true;}}, '<div class="tip">This is a tip</div>');
+        });
     });
 }) ();

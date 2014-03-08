@@ -83,10 +83,12 @@ var Aftershave = (function() {
         var defining = false;
         var token;
         var prev;
+        var next;
 
         for (var i = 0; i < tokens.length; i++) {
             token = tokens[i];
             prev = tokens[i - 1];
+            next = tokens[i + 1];
 
             if (token.type === 'Keyword' && token.value === 'var') {
                 insideVarDeclaration = true;
@@ -121,7 +123,11 @@ var Aftershave = (function() {
 
                 // not defined
                 if (prev.value !== ',' && !definedVars.hasOwnProperty(token.value)) {
-                    undefinedVars.push(token);
+                    var prepend = 'args';
+                    if (next && next.value === '(') {
+                        prepend = 'this.helpers';
+                    }
+                    undefinedVars.push([prepend, token]);
                 }
             }
 
@@ -134,9 +140,11 @@ var Aftershave = (function() {
         // replace the tokens backwards
         undefinedVars.reverse();
 
-        function _replaceToken(token, code) {
+        function _replaceToken(token_data, code) {
+            var prepend = token_data[0] + '.';
+            var token = token_data[1];
             var subString = code.substr(token.range[0]);
-            return code.substr(0, token.range[0]) + subString.replace(token.value, 'args.' + token.value);
+            return code.substr(0, token.range[0]) + subString.replace(token.value, prepend + token.value);
         }
 
         for (i = 0; i < undefinedVars.length; i++) {
