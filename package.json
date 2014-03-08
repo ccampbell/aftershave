@@ -4,7 +4,7 @@
   "description": "compiled javascript templates",
   "main": "./src/aftershave",
   "scripts": {
-    "test": "grunt simplemocha"
+    "test": "grunt"
   },
   "bin": {
     "aftershave": "./bin/aftershave"
