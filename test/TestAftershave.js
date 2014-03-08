@@ -219,11 +219,23 @@
             var context = {
                 render: function(name, args) {
                     if (name == 'master') {
-                        return aftershave.render(master, args)
+                        return aftershave.render(master, args);
                     }
                 }
             };
             _run(child, {results: false}, '<h1>No Results</h1>', context);
+        });
+
+        it('should allow directories in partial views', function() {
+            var template = '{% render(\'helper/tip.phtml\', {message: message}) %}';
+            var context = {
+                render: function(name, args) {
+                    if (name == 'helper/tip') {
+                        return args.message;
+                    }
+                }
+            };
+            _run(template, {message: 'Hello!'}, 'Hello!', context);
         });
     });
 }) ();

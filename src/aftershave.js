@@ -282,7 +282,8 @@ var Aftershave = (function() {
 
                             // special for render and escape
                             if (matches[1] === 'render') {
-                                functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, '')) + '\'';
+                                var useBasename = false;
+                                functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, ''), useBasename) + '\'';
                                 functionName = 'this.render';
                             }
 
