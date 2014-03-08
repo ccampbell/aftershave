@@ -177,6 +177,7 @@ var Aftershave = (function() {
             start,
             definedVars = {},
             defaultVar = '_t',
+            useBasename,
             activeVar = defaultVar,
             lineEnding,
             code = [],
@@ -272,7 +273,7 @@ var Aftershave = (function() {
 
                 // special case for extending views
                 if (firstWord === 'extend' || firstWord === 'extends') {
-                    var useBasename = false;
+                    useBasename = false;
                     extend = _templateNameFromPath(_stripQuotes(bit), useBasename);
                     continue;
                 }
@@ -290,7 +291,7 @@ var Aftershave = (function() {
 
                             // special for render and escape
                             if (matches[1] === 'render') {
-                                var useBasename = false;
+                                useBasename = false;
                                 functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, ''), useBasename) + '\'';
                                 functionName = 'this.render';
                             }
