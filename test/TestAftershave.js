@@ -254,5 +254,11 @@
             var template = '{% if (args.showTip("something")) %}<div class="tip">This is a tip</div>{% end %}';
             _run(template, {showTip: function() {return true;}}, '<div class="tip">This is a tip</div>');
         });
+
+        it('should allow in expressions', function() {
+            var someData = {1: 'one', 2: 'two'};
+            var template = '<ul>{% for (var key in data) %}<li>{{ data[key] }}{% end %}</ul>';
+            _run(template, {data: someData}, '<ul><li>one<li>two</ul>');
+        });
     });
 }) ();

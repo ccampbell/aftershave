@@ -135,6 +135,11 @@ var Aftershave = (function() {
                 insideVarDeclaration = false;
                 defining = false;
             }
+
+            if (token.type === 'Keyword' && token.value === 'in') {
+                insideVarDeclaration = false;
+                defining = false;
+            }
         }
 
         // replace the tokens backwards
