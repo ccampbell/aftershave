@@ -260,5 +260,24 @@
             var template = '<ul>{% for (var key in data) %}<li>{{ data[key] }}{% end %}</ul>';
             _run(template, {data: someData}, '<ul><li>one<li>two</ul>');
         });
+
+        it('levels should be correct inside blocks', function() {
+            var master = '{% block content %}{% end %}';
+            var context = {
+                render: function(name, args) {
+                    if (name == 'master') {
+                        return aftershave.render(master, args);
+                    }
+                }
+            };
+            var child = '{% extends master %}{% block content %}{% if (first) %}<ul>{% for (var key in data) %}<li>{{ data[key] }}</li>{% end %}</ul>{% elseif (second) %}<ul>{% for (var i = 0; i < data.length; i++) %}<li>{{ data[i] }}</li>{% end %}</ul>{% else %}third{% end %}{% end %}';
+
+            var someData = {1: 'one', 2: 'two'};
+            var otherData = ['first', 'second'];
+
+            _run(child, {first: true, data: someData}, '<ul><li>one</li><li>two</li></ul>', context);
+            _run(child, {second: true, data: otherData}, '<ul><li>first</li><li>second</li></ul>', context);
+            _run(child, {}, 'third', context);
+        });
     });
 }) ();

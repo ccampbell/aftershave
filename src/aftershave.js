@@ -315,7 +315,7 @@ var Aftershave = (function() {
                 // when an else statement happens it shouldn't increase again
                 // because there is still only one {% end %} statement that is
                 // expected
-                if (block && ['if', 'for', 'switch'].indexOf(firstWord) === 0) {
+                if (block && ['if', 'for', 'switch'].indexOf(firstWord) !== -1) {
                     block += 1;
                 }
 
