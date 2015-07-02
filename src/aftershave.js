@@ -297,7 +297,12 @@ var Aftershave = (function() {
                             // special for render and escape
                             if (matches[1] === 'render') {
                                 useBasename = false;
-                                functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, ''), useBasename) + '\'';
+
+                                // if it starts with a quote then do some magic
+                                if (functionArgs[0].charAt(0) == "'" || functionArgs[0].charAt(0) == '"') {
+                                    functionArgs[0] = '\'' + _templateNameFromPath(functionArgs[0].replace(/['"]/g, ''), useBasename) + '\'';
+                                }
+
                                 functionName = 'this.render';
                             }
 

@@ -238,6 +238,37 @@
             _run(template, {message: 'Hello!'}, 'Hello!', context);
         });
 
+        it('should allow partial view rendering from variables', function() {
+            var template = '<p>{% var name = "something"; %}{% render(name) %}</p>';
+            var context = {
+                render: function(name) {
+                    if (name == 'something') {
+                        return 'Test View!';
+                    }
+                }
+            };
+
+            _run(template, {}, '<p>Test View!</p>', context);
+        });
+
+        it('should allow partial view rendering from functions', function() {
+            var template = '<p>{% render(getViewToRender()) %}</p>';
+            var context = {
+                helpers: {
+                    getViewToRender: function() {
+                        return 'test';
+                    }
+                },
+                render: function(name) {
+                    if (name == 'test') {
+                        return 'Test View!';
+                    }
+                }
+            };
+
+            _run(template, {}, '<p>Test View!</p>', context);
+        });
+
         it('should use helpers inside of an if statement', function() {
             var template = '{% if (showTip("something")) %}<div class="tip">This is a tip</div>{% end %}';
             var context = {
