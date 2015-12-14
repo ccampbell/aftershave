@@ -3,6 +3,7 @@
 var uglify = require('uglify-js');
 var fs = require('fs'),
     path = require('path'),
+    mkdirp = require('mkdirp'),
     VERSION = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'))).version,
     aftershave = require('./aftershave.js');
 
@@ -130,6 +131,9 @@ function Compiler() {
         if (self.ugly) {
             contents = uglify.minify(contents, {fromString: true}).code;
         }
+
+        var destPath = path.dirname(dest);
+        mkdirp.sync(destPath);
 
         fs.writeFileSync(dest, contents, 'UTF-8');
         startOutput = '';

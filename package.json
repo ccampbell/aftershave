@@ -16,8 +16,9 @@
   "author": "Craig Campbell",
   "license": "MIT",
   "dependencies": {
-    "uglify-js": "~2.4.12",
-    "esprima": "~1.0.4"
+    "esprima": "~1.0.4",
+    "mkdirp": "^0.5.1",
+    "uglify-js": "~2.4.12"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
