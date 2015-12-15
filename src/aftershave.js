@@ -377,11 +377,15 @@ var Aftershave = (function() {
             return _templateNameFromPath(path);
         },
 
+        setOptions: function(opts) {
+            this._options = opts;
+        },
+
         process: function() {
             if (!compiler) {
                 compiler = require('./compiler.js');
             }
-            var instance = new compiler.Compiler();
+            var instance = new compiler.Compiler(this._options);
             instance.process.apply(instance, arguments);
         }
     };
