@@ -3,24 +3,16 @@
 var uglify = require('uglify-js');
 var fs = require('fs'),
     path = require('path'),
-    _ = require('lodash'),
     mkdirp = require('mkdirp'),
     VERSION = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'))).version,
     aftershave = require('./aftershave.js');
 
-function Compiler(opts) {
+function Compiler(options) {
     'use strict';
     var self = this;
 
     var startOutput = '';
     var output = '';
-
-    var options = _.extend({
-        alone: false,
-        ugly: false,
-        exports: false,
-        addDefault: false
-    }, opts);
 
     function _getStart(name) {
         var start = 'Aftershave.templates';

@@ -1,6 +1,7 @@
 /* jshint node:true */
 var path = require('path');
 var esprima = require('esprima');
+var _ = require('lodash');
 var compiler;
 var NATIVE_FUNCTIONS = {
     'decodeURI': 1,
@@ -32,6 +33,15 @@ var NATIVE_OBJECTS = {
 
 var Aftershave = (function() {
     'use strict';
+
+    var defaultOptions = {
+        alone: false,
+        ugly: false,
+        exports: false,
+        addDefault: false
+    };
+
+    var options = {};
 
     function _indent(count) {
         count *= 4;
@@ -378,14 +388,14 @@ var Aftershave = (function() {
         },
 
         setOptions: function(opts) {
-            this._options = opts;
+            options = _.extend({}, defaultOptions, opts);
         },
 
         process: function() {
             if (!compiler) {
                 compiler = require('./compiler.js');
             }
-            var instance = new compiler.Compiler(this._options);
+            var instance = new compiler.Compiler(options);
             instance.process.apply(instance, arguments);
         }
     };
