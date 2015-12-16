@@ -1,7 +1,7 @@
 /* jshint node: true */
 /* global console */
-var uglify = require('uglify-js');
-var fs = require('fs'),
+var uglify = require('uglify-js'),
+    fs = require('fs'),
     path = require('path'),
     mkdirp = require('mkdirp'),
     VERSION = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'))).version,
@@ -18,13 +18,13 @@ function Compiler(options) {
         var start = 'Aftershave.templates';
 
         if (options.exports) {
-            start = 'export '
+            start = 'export ';
 
             if (options.addDefault) {
-                start += 'default '
+                start += 'default ';
             }
 
-            start += 'function '
+            start += 'function ';
         }
 
         if (name.indexOf('-') === -1 && name.indexOf('.') === -1 && name.indexOf(path.sep) === -1) {
@@ -42,11 +42,12 @@ function Compiler(options) {
         return start += "['" + name + "']";
     }
 
-    function _wrap(fn, name, first) {
-        var code;
+    function _wrap(fn, name, first, imports) {
+        var code = '';
 
         if (options.exports) {
-            code = _getStart(name) + '(args) {\n';
+            code += (imports.join('\n') + '\n\n');
+            code += _getStart(name) + '(args) {\n';
             code += '    ' + fn.replace(/\n/g, '\n    ') + '\n}\n';
 
             return code;
@@ -104,6 +105,26 @@ function Compiler(options) {
         return str;
     }
 
+    function _getLibImportsFromOutput(output) {
+        var imports = [];
+        var contents = '';
+
+        // Poor man's check for escape function calls
+        if (output.indexOf('(escape(') !== -1) {
+            contents = fs.readFileSync(path.join(__dirname, 'imports/escape.js'), 'UTF-8');
+            imports.push(contents);
+        }
+
+        // Poor man's check for render function calls
+        if (output.indexOf('(render(') !== -1) {
+            contents = fs.readFileSync(path.join(__dirname, 'imports/render.js'), 'UTF-8');
+            imports.push(contents);
+        }
+
+        return imports.join('');
+    }
+
+
     function _getHelpers() {
         var str = '    Aftershave.helpers = {};\n';
         return str;
@@ -124,13 +145,20 @@ function Compiler(options) {
 
         var contents = fs.readFileSync(src, 'UTF-8'),
             fn = aftershave.generate(contents),
-            name = aftershave.templateNameFromPath(src);
+            name = aftershave.templateNameFromPath(src),
+            imports;
+
+        if (options.exports) {
+            imports = fn[1];
+            // Put last so we can extract imports first before overwriting
+            fn = fn[0];
+        }
 
         if (isSubDirectory) {
             name = path.join(isSubDirectory, name);
         }
 
-        output += _wrap(fn, name, first);
+        output += _wrap(fn, name, first, imports);
     };
 
     self.processDirectory = function(src, matchRegex, isSubDirectory) {
@@ -153,6 +181,10 @@ function Compiler(options) {
     };
 
     self.writeToDisk = function(dest) {
+        if (options.exports) {
+            startOutput = _getLibImportsFromOutput(output);
+        }
+
         if (!options.alone && output.indexOf('this.escape(') !== -1) {
             startOutput += _getEscape();
         }
@@ -161,7 +193,14 @@ function Compiler(options) {
             startOutput += _getHelpers();
         }
 
-        var contents = startOutput + '\n' + output + '\n' + _endOutput();
+        var contents = '';
+
+        if (startOutput) {
+            contents += startOutput + '\n';
+        }
+
+        contents += output + '\n' + _endOutput();
+
         contents = contents.replace(/ +(?=\n)/g, '');
 
         if (options.ugly) {

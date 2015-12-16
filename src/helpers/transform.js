@@ -1,12 +1,11 @@
 var esprima = require('esprima');
 var constants = require('./constants');
 
+function transform(code, options, imports) {
+    options = options || {};
 
-
-function transform(code, options) {
     var data = esprima.parse(code, {range: true, tokens: true, tolerant: true});
     var tokens = data.tokens;
-
     var undefinedVars = [];
     var definedVars = {'args': 1};
     var insideVarDeclaration = false;
@@ -94,6 +93,10 @@ function transform(code, options) {
 
     for (i = 0; i < undefinedVars.length; i++) {
         code = _replaceToken(undefinedVars[i], code);
+    }
+
+    if (options.exports) {
+        return [code, imports];
     }
 
     return code;

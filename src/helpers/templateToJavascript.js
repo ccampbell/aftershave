@@ -4,6 +4,7 @@ var utils = require('./utils');
 var constants = require('./constants');
 
 function templateToJavascript(string, options) {
+    options = options || {};
 
     string = string.replace(/\s{2,}/g, ' ').replace(/> </g, '><');
 
@@ -35,10 +36,23 @@ function templateToJavascript(string, options) {
         extend,
         block,
         indent = 0,
-        i;
+        i,
+        imports = [];
 
     for (i = 0; i < length; i++) {
         line = bits[i];
+
+        // Strip out and save import statements
+        if (line.indexOf('import') === 0) {
+            // Add semicolon if not already added
+            if (line[line.length - 1] !== ';') {
+                line += ';'
+            }
+
+            imports.push(line);
+
+            line = '';
+        }
 
         // if it is all spaces then remove them
         if (line.replace(/ /g, '') === '') {
@@ -209,7 +223,8 @@ function templateToJavascript(string, options) {
     }
 
     code.push('return ' + defaultVar + ';');
-    return transform(code.join(''), options);
+
+    return transform(code.join(''), options, imports);
 }
 
 module.exports = templateToJavascript;
