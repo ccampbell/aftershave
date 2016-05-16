@@ -1,6 +1,6 @@
 {
   "name": "aftershave",
-  "version": "0.6.11",
+  "version": "1.0.0",
   "description": "compiled javascript templates",
   "main": "./src/aftershave",
   "scripts": {
