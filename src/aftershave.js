@@ -7,6 +7,7 @@ var NATIVE_FUNCTIONS = {
     'decodeURIComponent': 1,
     'encodeURI': 1,
     'encodeURIComponent': 1,
+    'escape': 1,
     'isFinite': 1,
     'isNaN': 1,
     'parseInt': 1,
