@@ -305,13 +305,14 @@ var Aftershave = (function() {
 
                                 functionName = 'this.render';
                             }
-
-                            if (matches[1] === 'escape') {
-                                functionName = 'this.escape';
-                            }
                         }
 
-                        code.push(_indent(indent) + activeVar + ' += (' + functionName + '(' + functionArgs.join(',') + ') || \'\')' +lineEnding + '\n');
+                        var functionBlock = functionName + '(' + functionArgs.join(',') + ')';
+                        if (functionName.indexOf('this.helpers.') === 0) {
+                            functionBlock = '(' + functionName + '(' + functionArgs.join(',') + ') || \'\')';
+                        }
+
+                        code.push(_indent(indent) + activeVar + ' += ' + functionBlock + lineEnding + '\n');
                         continue;
                     }
                 }
