@@ -371,11 +371,11 @@
         it('Should allow let and const to be used', function() {
             var template = '{% let something = true %}';
             var finalCode = aftershave.generate(template);
-            expect(finalCode.indexOf('let something = true;')).to.not.equal(-1);
+            expect(finalCode).to.contain('let something = true;');
 
             template = '{% const something = true %}';
             finalCode = aftershave.generate(template);
-            expect(finalCode.indexOf('const something = true;')).to.not.equal(-1);
+            expect(finalCode).to.contain('const something = true;');
         });
     });
 }) ();
