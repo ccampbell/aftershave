@@ -16,13 +16,13 @@
   "author": "Craig Campbell",
   "license": "MIT",
   "dependencies": {
-    "uglify-js": "~2.4.12",
-    "esprima": "~1.0.4"
+    "uglify-js": "2.4.12",
+    "esprima": "1.0.4"
   },
   "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-contrib-jshint": "~0.8.0",
-    "grunt-simple-mocha": "~0.4.0",
-    "chai": "~1.9.0"
+    "grunt": "0.4.2",
+    "grunt-contrib-jshint": "0.8.0",
+    "grunt-simple-mocha": "0.4.0",
+    "chai": "1.9.0"
   }
 }
