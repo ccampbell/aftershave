@@ -98,14 +98,13 @@
         });
 
         it('should let you escape variables', function() {
-            var context = {
-                escape: function(string) {
-                    return 'Escaped: ' + string;
-                }
+            global.escape = function(string) {
+                return 'Escaped: ' + string;
             };
+
             var template = '<title>{% escape(title) %}</title>';
             var args = {title: 'Whatever'};
-            _run(template, args, '<title>Escaped: Whatever</title>', context);
+            _run(template, args, '<title>Escaped: Whatever</title>');
         });
 
          it('should let you use helper functions', function() {
