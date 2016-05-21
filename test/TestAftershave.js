@@ -346,5 +346,24 @@
             var template = '{% contrastColor(lighten(color), color, flag) %}';
             _run(template, args, 'First: #111, Second: #000', context);
         });
+
+        it('Should still use helper functions and args in variable declarations', function() {
+            var context = {
+                helpers: {
+                    contrastColor: function(foreground, background) {
+                        if (background === '#333') {
+                            return '#fff';
+                        }
+                    },
+
+                    lighten: function() {
+                        return '#333';
+                    }
+                }
+            };
+
+            var template = '{% var checkmarkColor = contrastColor(color, lighten(color, 30)); %}{{ checkmarkColor }}';
+            _run(template, {color: '#000'}, '#fff', context);
+        });
     });
 }) ();

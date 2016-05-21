@@ -97,7 +97,7 @@ var Aftershave = (function() {
                 continue;
             }
 
-            if (insideVarDeclaration && token.type === 'Punctuator' && token.value === ',') {
+            if (insideVarDeclaration && token.type === 'Identifier' && prev.value === ',' && next.value === '=') {
                 defining = true;
                 continue;
             }
