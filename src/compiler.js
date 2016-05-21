@@ -30,7 +30,7 @@ function Compiler() {
 
     function _wrap(fn, name, first) {
         templateNames[name] = _getStart(name);
-        var code = (first ? '' : '\n') + 'export function ' + templateNames[name] + '(args) {\n';
+        var code = (first ? '' : '\n') + 'export function ' + templateNames[name] + '(args={}) {\n';
         code += '    ' + fn.replace(/\n/g, '\n    ') + '\n}\n';
         return code;
     }
