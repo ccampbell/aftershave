@@ -366,4 +366,16 @@
             _run(template, {color: '#000'}, '#fff', context);
         });
     });
+
+    describe('Testing Aftershave.generate', function() {
+        it('Should allow let and const to be used', function() {
+            var template = '{% let something = true %}';
+            var finalCode = aftershave.generate(template);
+            expect(finalCode.indexOf('let something = true;')).to.not.equal(-1);
+
+            template = '{% const something = true %}';
+            finalCode = aftershave.generate(template);
+            expect(finalCode.indexOf('const something = true;')).to.not.equal(-1);
+        });
+    });
 }) ();

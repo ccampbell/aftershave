@@ -91,7 +91,7 @@ var Aftershave = (function() {
             prev = tokens[i - 1];
             next = tokens[i + 1];
 
-            if (token.type === 'Keyword' && token.value === 'var') {
+            if (token.type === 'Keyword' && ['var', 'let', 'const'].indexOf(token.value) !== -1) {
                 insideVarDeclaration = true;
                 defining = true;
                 continue;
