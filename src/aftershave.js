@@ -123,7 +123,7 @@ var Aftershave = (function() {
                 }
 
                 // not defined
-                if (prev.value !== ',' && !definedVars.hasOwnProperty(token.value)) {
+                if (next.value !== ':' && !definedVars.hasOwnProperty(token.value)) {
                     var prepend = 'args';
                     if (next && next.value === '(') {
                         prepend = 'this.helpers';

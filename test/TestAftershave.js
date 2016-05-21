@@ -309,5 +309,42 @@
             _run(child, {second: true, data: otherData}, '<ul><li>first</li><li>second</li></ul>', context);
             _run(child, {}, 'third', context);
         });
+
+        it('Should not prepend "args" to passed objects', function() {
+            var context = {
+                helpers: {
+                    something: function(name) {
+                        return name;
+                    }
+                }
+            };
+            var template = '{% something(name, {first: 1, second: 2}) %}';
+            var args = {name: 'Craig'};
+            _run(template, args, 'Craig', context);
+        });
+
+        it('Should correctly pull multiple arguments from passed args', function() {
+            var context = {
+                helpers: {
+                    contrastColor: function(color1, color2, flag) {
+                        if (flag) {
+                            return 'First: ' + color1 + ', Second: ' + color2;
+                        }
+
+                        return '';
+                    },
+
+                    lighten: function(color) {
+                        if (color == '#000') {
+                            return '#111';
+                        }
+                    }
+                }
+            };
+
+            var args = {color: '#000', flag: true};
+            var template = '{% contrastColor(lighten(color), color, flag) %}';
+            _run(template, args, 'First: #111, Second: #000', context);
+        });
     });
 }) ();
