@@ -107,6 +107,11 @@ var Aftershave = (function() {
                 continue;
             }
 
+            if (insideVarDeclaration && token.type === 'Identifier' && ['in', 'of'].indexOf(token.value) !== -1) {
+                defining = false;
+                continue;
+            }
+
             if (token.type === 'Identifier' && prev.value !== '.' && prev.value !== '{') {
                 if (defining) {
                     definedVars[token.value] = 1;

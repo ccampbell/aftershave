@@ -377,5 +377,15 @@
             finalCode = aftershave.generate(template);
             expect(finalCode).to.contain('const something = true;');
         });
+
+        it('Should allow for-of and for-in loops', function() {
+            var template = '{% for (let task of tasks) %}{{ task.id }}{% end %}';
+            var finalCode = aftershave.generate(template);
+            expect(finalCode).to.contain('for (let task of args.tasks) {');
+
+            template = '{% for (let key in tasks) %}{{ tasks[key].id }}{% end %}';
+            finalCode = aftershave.generate(template);
+            expect(finalCode).to.contain('for (let key in args.tasks) {');
+        });
     });
 }) ();
