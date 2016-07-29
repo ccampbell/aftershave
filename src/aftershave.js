@@ -35,6 +35,7 @@ var Aftershave = (function() {
     'use strict';
 
     function _indent(count) {
+        count = Math.max(count, 0);
         count *= 4;
         return new Array(++count).join(' ');
     }
@@ -260,7 +261,7 @@ var Aftershave = (function() {
                     }
 
                     indent -= 1;
-                    code.push(_indent(Math.max(indent, 0)) + '}\n\n');
+                    code.push(_indent(indent) + '}\n\n');
                     continue;
                 }
 

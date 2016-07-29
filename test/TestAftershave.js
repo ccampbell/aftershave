@@ -387,5 +387,20 @@
             finalCode = aftershave.generate(template);
             expect(finalCode).to.contain('for (let key in args.tasks) {');
         });
+
+        it('Should allow breaking out of loops', function() {
+            var template = '<ul class="todo">\n' +
+            '    {% let count = 0; %}\n' +
+            '    {% for (let task of project.tasks) %}\n' +
+            '        {% count += 1 %}\n' +
+            '        <li></li>\n' +
+            '        {% if (count >= 4) %}\n' +
+            '            {% break %}\n' +
+            '        {% end %}\n' +
+            '    {% end %}\n' +
+            '</ul>';
+            var finalCode = aftershave.generate(template);
+            expect(finalCode).to.contain('break;');
+        });
     });
 }) ();
